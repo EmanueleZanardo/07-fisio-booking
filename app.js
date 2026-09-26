@@ -98,13 +98,9 @@ function buildSlots(tenant, now) {
   return slot;
 }
 
-function modalitaLabel(m) {
-  return m === 'domicilio' ? 'A domicilio' : 'In studio';
-}
-
 /* ---------- Messaggio WhatsApp (tipologia prenotazioni) ---------- */
 function buildMessage(tenant, righe, form) {
-  // righe: [{nome, qta, prezzo}]  form: {nome, telefono, modalita, indirizzo, orario, note, orderId}
+  // righe: [{nome, qta, prezzo}]  form: {nome, telefono, indirizzo, orario, note, orderId}
   var L = [];
   var DIV = '--------------------------';
   L.push('*NUOVA PRENOTAZIONE* — ' + tenant.nome);
@@ -124,10 +120,10 @@ function buildMessage(tenant, righe, form) {
   L.push(DIV);
   L.push('Nome: ' + form.nome);
   L.push('Telefono: ' + form.telefono);
-  L.push('Modalità: ' + modalitaLabel(form.modalita));
-  if (form.modalita === 'domicilio' && form.indirizzo) L.push('Indirizzo: ' + form.indirizzo);
-  if (form.modalita === 'studio') L.push('Sede: da concordare in chat');
+  L.push('Trattamento a domicilio');
+  L.push('Indirizzo: ' + form.indirizzo);
   L.push('Fascia oraria preferita: ' + form.orario);
+  L.push('Pagamento: di persona a fine trattamento');
   var note = truncateNote(form.note);
   if (note) L.push('Note: ' + note);
   L.push('Prenotazione #' + form.orderId + ' · inviata dal sito');
@@ -143,8 +139,7 @@ function buildWhatsUrl(tenant, message) {
  * ===================================================================== */
 var tenant = null;
 var prodottiById = {};
-var carrello = {};   // id -> qta (qta = numero di sedute)
-var modalita = 'domicilio';
+var carrello = {};   // id -> 1 (una sola prenotazione alla volta)
 
 function $(id) { return document.getElementById(id); }
 
@@ -255,6 +250,20 @@ function renderMenu() {
       pr.textContent = fmtEUR(p.prezzo) + ' / seduta';
       info.appendChild(pr);
       art.appendChild(info);
+      var azioni = document.createElement('div');
+      azioni.className = 'prod-azioni';
+      azioni.dataset.id = p.id;
+
+      var meno = document.createElement('button');
+      meno.className = 'btn-remove';
+      meno.type = 'button';
+      meno.textContent = '−';
+      meno.setAttribute('aria-label', 'Rimuovi ' + p.nome + ' dalla prenotazione');
+      meno.addEventListener('click', function () {
+        delete carrello[p.id];
+        renderCart();
+      });
+
       var btn = document.createElement('button');
       btn.className = 'btn-add';
       btn.type = 'button';
@@ -262,10 +271,18 @@ function renderMenu() {
       btn.setAttribute('aria-label', 'Aggiungi ' + p.nome + ' alla prenotazione');
       btn.addEventListener('click', function () {
         if (p.disponibile === false) return;
-        carrello[p.id] = (carrello[p.id] || 0) + 1;
+        var ids = Object.keys(carrello);
+        if (ids.length && !carrello[p.id]) {
+          menuAvviso('Puoi prenotare un solo trattamento alla volta: tocca − sul trattamento scelto per cambiarlo.');
+          return;
+        }
+        menuAvviso(null);
+        carrello[p.id] = 1;
         renderCart();
       });
-      art.appendChild(btn);
+      azioni.appendChild(meno);
+      azioni.appendChild(btn);
+      art.appendChild(azioni);
       sec.appendChild(art);
     });
     menu.appendChild(sec);
@@ -301,10 +318,34 @@ function cartSubtotale() {
   return cartRighe().reduce(function (s, r) { return s + r.qta * r.prezzo; }, 0);
 }
 
+function menuAvviso(msg) {
+  var e = $('menu-avviso');
+  if (!msg) { e.hidden = true; e.textContent = ''; return; }
+  e.hidden = false;
+  e.textContent = msg;
+}
+
+/* Abilita/disabilita + e − sulle schede in base al carrello (un solo item) */
+function refreshMenuButtons() {
+  var ids = Object.keys(carrello);
+  Array.prototype.forEach.call(document.querySelectorAll('.prod-azioni'), function (az) {
+    var id = az.getAttribute('data-id');
+    var inCart = !!carrello[id];
+    var btnAdd = az.querySelector('.btn-add');
+    var btnRem = az.querySelector('.btn-remove');
+    btnAdd.disabled = !inCart && ids.length > 0;
+    btnAdd.textContent = inCart ? '✓' : '+';
+    btnAdd.classList.toggle('in-cart', inCart);
+    btnRem.disabled = !inCart;
+  });
+}
+
 function renderCart() {
   var righe = cartRighe();
   var count = righe.reduce(function (s, r) { return s + r.qta; }, 0);
   var totale = cartSubtotale();
+
+  refreshMenuButtons();
 
   var bar = $('cartbar');
   if (count === 0) {
@@ -318,7 +359,7 @@ function renderCart() {
   var box = $('righe');
   box.innerHTML = '';
   if (!righe.length) {
-    box.innerHTML = '<p class="muted">Nessuna seduta selezionata. Tocca + sui trattamenti per aggiungerle.</p>';
+    box.innerHTML = '<p class="muted">Nessun trattamento selezionato. Tocca + sul trattamento per aggiungerlo (uno alla volta).</p>';
   }
   righe.forEach(function (r) {
     var div = document.createElement('div');
@@ -327,29 +368,6 @@ function renderCart() {
     nome.className = 'r-nome';
     nome.textContent = r.nome;
     div.appendChild(nome);
-
-    var qty = document.createElement('span');
-    qty.className = 'qty';
-    var meno = document.createElement('button');
-    meno.type = 'button'; meno.textContent = '−';
-    meno.setAttribute('aria-label', 'Riduci sedute');
-    meno.addEventListener('click', function () {
-      carrello[r.id]--;
-      if (carrello[r.id] <= 0) delete carrello[r.id];
-      renderCart();
-    });
-    var q = document.createElement('span');
-    q.className = 'q';
-    q.textContent = r.qta;
-    var piu = document.createElement('button');
-    piu.type = 'button'; piu.textContent = '+';
-    piu.setAttribute('aria-label', 'Aumenta sedute');
-    piu.addEventListener('click', function () {
-      carrello[r.id]++;
-      renderCart();
-    });
-    qty.appendChild(meno); qty.appendChild(q); qty.appendChild(piu);
-    div.appendChild(qty);
 
     var prezzo = document.createElement('span');
     prezzo.className = 'r-prezzo';
@@ -398,14 +416,6 @@ function bindUI() {
   $('drawer-chiudi').addEventListener('click', closeDrawer);
   $('drawer-sfondo').addEventListener('click', closeDrawer);
 
-  document.querySelectorAll('input[name="modalita"]').forEach(function (radio) {
-    radio.addEventListener('change', function () {
-      modalita = document.querySelector('input[name="modalita"]:checked').value;
-      $('wrap-indirizzo').hidden = (modalita !== 'domicilio');
-      renderCart();
-    });
-  });
-
   $('ordine-form').addEventListener('submit', onSubmit);
 }
 
@@ -421,7 +431,7 @@ function onSubmit(ev) {
   formError(null);
 
   var righe = cartRighe();
-  if (!righe.length) { formError('Nessuna seduta selezionata: aggiungi almeno un trattamento.'); return; }
+  if (!righe.length) { formError('Nessun trattamento selezionato: aggiungine uno.'); return; }
 
   var nome = $('f-nome').value.trim();
   var telefono = $('f-telefono').value.trim();
@@ -431,15 +441,15 @@ function onSubmit(ev) {
 
   if (!nome) { formError('Inserisci il tuo nome.'); $('f-nome').focus(); return; }
   if (!telefono) { formError('Inserisci il tuo numero di telefono.'); $('f-telefono').focus(); return; }
-  if (modalita === 'domicilio' && !indirizzo) {
-    formError('Per il trattamento a domicilio serve l\u2019indirizzo.');
+  if (!indirizzo) {
+    formError('Inserisci l\u2019indirizzo dove ricevere il trattamento.');
     $('f-indirizzo').focus();
     return;
   }
 
   var orderId = genOrderId();
   var message = buildMessage(tenant, righe, {
-    nome: nome, telefono: telefono, modalita: modalita,
+    nome: nome, telefono: telefono,
     indirizzo: indirizzo, orario: orario, note: note, orderId: orderId
   });
   var url = buildWhatsUrl(tenant, message);
@@ -479,7 +489,6 @@ if (typeof module !== 'undefined' && module.exports) {
     orariGiornoTesto: orariGiornoTesto,
     buildMessage: buildMessage,
     buildWhatsUrl: buildWhatsUrl,
-    modalitaLabel: modalitaLabel,
     MAX_URL_LEN: MAX_URL_LEN,
     MAX_RIGHE_MSG: MAX_RIGHE_MSG
   };
