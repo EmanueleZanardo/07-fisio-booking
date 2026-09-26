@@ -6,7 +6,7 @@
  * testo precompilato; l'invio lo fa l'utente toccando "Invia" in WhatsApp.
  * ===================================================================== */
 
-var DEFAULT_SLUG = 'roberto-fisioterapista';
+var DEFAULT_SLUG = 'roberta-fisioterapista';
 var MAX_RIGHE_MSG = 25;
 var MAX_NOTE_CHARS = 300;
 var MAX_URL_LEN = 1800;
