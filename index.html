@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prenota una visita — Roberto · Fisioterapista</title>
+<meta name="description" content="Prenota online una seduta di fisioterapia con Roberto: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. A domicilio in provincia di Varese e in Ticino (a sud di Lugano).">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Banner DEMO: mostrato solo se il numero WhatsApp è un segnaposto -->
+<div id="demo-banner" hidden>
+  ⚠️ <strong>DEMO</strong> — il numero WhatsApp (<span id="demo-numero"></span>) è un
+  <strong>segnaposto da sostituire col numero reale</strong>.
+  Nessuna prenotazione reale viene inviata.
+</div>
+
+<header class="tenant-head">
+  <h1 id="t-nome">Caricamento…</h1>
+  <p id="t-desc" class="muted"></p>
+  <p id="t-zone" class="zone"></p>
+  <p id="t-orari" class="orari"></p>
+  <p id="t-stato" class="stato"></p>
+</header>
+
+<div id="load-error" class="error-box" hidden></div>
+
+<main id="menu"></main>
+
+<footer class="foot">
+  <p class="muted small">Tariffa: 40 € all'ora, per ogni trattamento.</p>
+  <p class="muted small">La fascia oraria scelta è una preferenza: giorni e orari definitivi si concordano in chat WhatsApp. La conferma arriva in chat.</p>
+</footer>
+
+<!-- Barra prenotazione sticky -->
+<button id="cartbar" hidden>
+  <span id="cartbar-testo"></span>
+  <span class="cartbar-cta">Prenota →</span>
+</button>
+
+<!-- Pannello riepilogo + form prenotazione -->
+<div id="drawer-sfondo" hidden></div>
+<section id="drawer" hidden aria-label="Riepilogo e dati prenotazione">
+  <div class="drawer-handle"></div>
+  <div class="drawer-head">
+    <h2>La tua prenotazione</h2>
+    <button id="drawer-chiudi" aria-label="Chiudi">✕</button>
+  </div>
+
+  <div id="righe"></div>
+
+  <div id="totali" class="totali"></div>
+
+  <form id="ordine-form" novalidate>
+    <h3>I tuoi dati</h3>
+
+    <label>Nome e cognome *
+      <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Mario Rossi" required>
+    </label>
+
+    <label>Telefono *
+      <input type="tel" id="f-telefono" autocomplete="tel" placeholder="Es. 345 111 4337" required>
+    </label>
+
+    <fieldset class="modalita">
+      <legend>Dove vuoi ricevere il trattamento? *</legend>
+      <label class="radio-pill"><input type="radio" name="modalita" value="domicilio" checked> 🚗 A domicilio</label>
+      <label class="radio-pill"><input type="radio" name="modalita" value="studio"> 🏠 In studio</label>
+    </fieldset>
+
+    <label id="wrap-indirizzo">Indirizzo (per il domicilio) *
+      <input type="text" id="f-indirizzo" autocomplete="street-address" placeholder="Via, numero, località">
+    </label>
+
+    <label>Fascia oraria preferita *
+      <select id="f-orario" required></select>
+    </label>
+    <p id="orario-avviso" class="avviso" hidden></p>
+
+    <label>Note (facoltative)
+      <textarea id="f-note" rows="2" maxlength="320" placeholder="Es. dolore alla spalla destra da due settimane…"></textarea>
+    </label>
+
+    <p id="form-error" class="error" hidden></p>
+
+    <button type="submit" id="btn-ordina" class="cta">📲 Prenota via WhatsApp</button>
+    <p class="muted small hint">Si aprirà WhatsApp (o WhatsApp Web) con il messaggio già pronto: tocca <strong>Invia</strong> per confermare la prenotazione.</p>
+  </form>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
