@@ -1,99 +1,99 @@
 {
-  "_nota": "TENANT per 'Roberta — Fisioterapista'. Tariffa 40 €/ora per ogni trattamento. Zone: provincia di Varese + Canton Ticino (a sud di Lugano). Le prenotazioni arrivano via WhatsApp al +39 345 111 4337. Giorni e orari definitivi da concordare in chat: gli slot proposti sono solo preferenze.",
-  "categorie": [
-    {
-      "id": "trattamenti",
-      "nome": "Trattamenti"
-    }
-  ],
-  "chiusureStraordinarie": [],
-  "colori": {
-    "primario": "#0E7C6B",
-    "sfondo": "#F7FAF9"
-  },
-  "costoConsegna": 0,
-  "demo": false,
-  "descrizione": "Fisioterapista: trattamenti riabilitativi a domicilio. Scegli il trattamento e prenota: la richiesta arriva subito su WhatsApp. Pagamento di persona a fine trattamento.",
-  "fasceOrarioMin": 30,
-  "lingua": "it",
-  "nome": "Roberta — Fisioterapista",
-  "orari": {
-    "dom": null,
-    "gio": [
-      [
-        "09:00",
-        "19:00"
-      ]
+    "_nota": "TENANT per 'Roberta — Fisioterapista'. Tariffa 40 €/ora per ogni trattamento. Zone: provincia di Varese + Canton Ticino (a sud di Lugano). Le prenotazioni arrivano via WhatsApp al +39 345 111 4337. Giorni e orari definitivi da concordare in chat: gli slot proposti sono solo preferenze.",
+    "categorie": [
+        {
+            "id": "trattamenti",
+            "nome": "Trattamenti"
+        }
     ],
-    "lun": [
-      [
-        "09:00",
-        "19:00"
-      ]
-    ],
-    "mar": [
-      [
-        "09:00",
-        "19:00"
-      ]
-    ],
-    "mer": [
-      [
-        "09:00",
-        "19:00"
-      ]
-    ],
-    "sab": [
-      [
-        "09:00",
-        "13:00"
-      ]
-    ],
-    "ven": [
-      [
-        "09:00",
-        "19:00"
-      ]
-    ]
-  },
-  "prodotti": [
-    {
-      "categoria": "trattamenti",
-      "descrizione": "Seduta da 1 ora — recupero dopo infortuni e interventi",
-      "disponibile": true,
-      "id": "riabilitazione",
-      "nome": "Riabilitazione ortopedica / post-infortunio",
-      "prezzo": 40.0
+    "chiusureStraordinarie": [],
+    "colori": {
+        "primario": "#0E7C6B",
+        "sfondo": "#F7FAF9"
     },
-    {
-      "categoria": "trattamenti",
-      "descrizione": "Seduta da 1 ora — schiena, collo, spalle, ginocchia…",
-      "disponibile": true,
-      "id": "dolori",
-      "nome": "Dolori muscolari e articolari",
-      "prezzo": 40.0
+    "costoConsegna": 0,
+    "demo": false,
+    "descrizione": "Fisioterapista: trattamenti riabilitativi a domicilio dedicati alle persone anziane. Scegli il trattamento e prenota: la richiesta arriva subito su WhatsApp. Pagamento di persona a fine trattamento.",
+    "fasceOrarioMin": 30,
+    "lingua": "it",
+    "nome": "Roberta — Fisioterapista",
+    "orari": {
+        "dom": null,
+        "gio": [
+            [
+                "09:00",
+                "19:00"
+            ]
+        ],
+        "lun": [
+            [
+                "09:00",
+                "19:00"
+            ]
+        ],
+        "mar": [
+            [
+                "09:00",
+                "19:00"
+            ]
+        ],
+        "mer": [
+            [
+                "09:00",
+                "19:00"
+            ]
+        ],
+        "sab": [
+            [
+                "09:00",
+                "13:00"
+            ]
+        ],
+        "ven": [
+            [
+                "09:00",
+                "19:00"
+            ]
+        ]
     },
-    {
-      "categoria": "trattamenti",
-      "descrizione": "Seduta da 1 ora — postura e mobilità",
-      "disponibile": true,
-      "id": "posturale",
-      "nome": "Ginnastica posturale",
-      "prezzo": 40.0
-    },
-    {
-      "categoria": "trattamenti",
-      "descrizione": "Seduta da 1 ora — decontratturante e rilassante",
-      "disponibile": true,
-      "id": "massoterapia",
-      "nome": "Massoterapia",
-      "prezzo": 40.0
-    }
-  ],
-  "slug": "roberta-fisioterapista",
-  "tariffaOraria": 40.0,
-  "tipo": "prenotazioni",
-  "valuta": "EUR",
-  "whatsapp": "393451114337",
-  "zone": "Provincia di Varese e Canton Ticino (zone a sud di Lugano)"
+    "prodotti": [
+        {
+            "categoria": "trattamenti",
+            "descrizione": "Seduta da 1 ora — recupero dopo infortuni e interventi",
+            "disponibile": true,
+            "id": "riabilitazione",
+            "nome": "Riabilitazione ortopedica / post-infortunio",
+            "prezzo": 40.0
+        },
+        {
+            "categoria": "trattamenti",
+            "descrizione": "Seduta da 1 ora — schiena, collo, spalle, ginocchia…",
+            "disponibile": true,
+            "id": "dolori",
+            "nome": "Dolori muscolari e articolari",
+            "prezzo": 40.0
+        },
+        {
+            "categoria": "trattamenti",
+            "descrizione": "Seduta da 1 ora — postura e mobilità",
+            "disponibile": true,
+            "id": "posturale",
+            "nome": "Ginnastica posturale",
+            "prezzo": 40.0
+        },
+        {
+            "categoria": "trattamenti",
+            "descrizione": "Seduta da 1 ora — decontratturante e rilassante",
+            "disponibile": true,
+            "id": "massoterapia",
+            "nome": "Massoterapia",
+            "prezzo": 40.0
+        }
+    ],
+    "slug": "roberta-fisioterapista",
+    "tariffaOraria": 40.0,
+    "tipo": "prenotazioni",
+    "valuta": "EUR",
+    "whatsapp": "393451114337",
+    "zone": "Provincia di Varese e Canton Ticino (zone a sud di Lugano)"
 }
