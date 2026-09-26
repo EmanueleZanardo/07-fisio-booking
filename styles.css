@@ -252,3 +252,13 @@ body {
 
 /* ---------- Zone servite (fisio) ---------- */
 .zone { font-size: 0.9rem; margin: 6px 0 2px; font-weight: 600; }
+
+/* ---------- Badge servizio dedicato alle persone anziane ---------- */
+.anziani-badge {
+  max-width: 640px;
+  margin: 2px auto 0;
+  padding: 0 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primario);
+}
