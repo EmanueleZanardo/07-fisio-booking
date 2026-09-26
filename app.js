@@ -116,7 +116,7 @@ function buildMessage(tenant, righe, form) {
   L.push(DIV);
 
   var totale = righe.reduce(function (s, r) { return s + r.qta * r.prezzo; }, 0);
-  L.push('TOTALE STIMATO: ' + fmtEUR(totale) + ' (40 €/ora)');
+  L.push('TOTALE STIMATO: ' + fmtEUR(totale) + ' (40 € / seduta da 45 min)');
   L.push(DIV);
   L.push('Nome: ' + form.nome);
   L.push('Telefono: ' + form.telefono);
@@ -397,7 +397,7 @@ function renderCart() {
     d.appendChild(a); d.appendChild(b);
     tot.appendChild(d);
   }
-  tRiga('Totale stimato (' + fmtEUR(40) + '/ora)', fmtEUR(sub), true);
+  tRiga('Totale stimato (' + fmtEUR(40) + ' / seduta da 45 min)', fmtEUR(sub), true);
 }
 
 function openDrawer() {
