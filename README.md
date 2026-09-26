@@ -1,6 +1,6 @@
 # Fisio-booking — Prenotazioni visite fisioterapiche via WhatsApp
 
-Sito di prenotazione per **Roberto — Fisioterapista**: il paziente sceglie i
+Sito di prenotazione per **Roberta — Fisioterapista**: il paziente sceglie i
 trattamenti (quantità = numero di sedute), compila nome/telefono/modalità
 (a domicilio o in studio), indica una fascia oraria preferita e invia la
 richiesta via WhatsApp con messaggio precompilato (`wa.me`).
@@ -10,7 +10,7 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 
 ## Dati attività
 
-- **Nome:** Roberto — Fisioterapista
+- **Nome:** Roberta — Fisioterapista
 - **Tariffa:** 40 €/ora per ogni trattamento
 - **Zone:** provincia di Varese + Canton Ticino (a sud di Lugano)
 - **WhatsApp prenotazioni:** +39 345 111 4337 (numero reale, `demo: false`)
@@ -32,17 +32,17 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 ├── styles.css                 # mobile-first (tema teal)
 ├── tenant.json                # TEMPLATE per nuovi tenant
 ├── tenants/
-│   └── roberto-fisioterapista.json  # configurazione attività
+│   └── roberta-fisioterapista.json  # configurazione attività
 ├── vercel.json
 └── README.md
 ```
 
-Il tenant si sceglie con `?tenant=<slug>` (default: `roberto-fisioterapista`).
+Il tenant si sceglie con `?tenant=<slug>` (default: `roberta-fisioterapista`).
 
 ## Test (26/09/2026)
 
 - ✅ `node --check app.js`
-- ✅ JSON valido (`tenant.json`, `tenants/roberto-fisioterapista.json`)
+- ✅ JSON valido (`tenant.json`, `tenants/roberta-fisioterapista.json`)
 - ✅ Test funzionali in Node: messaggio prenotazione conforme, `encodeURIComponent`
   corretto con caratteri speciali, slot orari (buffer 20 min), troncamento note
   a 300 caratteri, ID prenotazione formato `Pxxxx`, numero WhatsApp valido.
