@@ -1,9 +1,10 @@
 # Fisio-booking — Prenotazioni visite fisioterapiche via WhatsApp
 
-Sito di prenotazione per **Roberta — Fisioterapista**: il paziente sceglie i
-trattamenti (quantità = numero di sedute), compila nome/telefono/modalità
-(a domicilio o in studio), indica una fascia oraria preferita e invia la
-richiesta via WhatsApp con messaggio precompilato (`wa.me`).
+Sito di prenotazione per **Roberta — Fisioterapista**: il paziente sceglie un
+trattamento (una sola prenotazione alla volta), compila nome/telefono/indirizzo
+(trattamenti sempre a domicilio), indica una fascia oraria preferita e invia la
+richiesta via WhatsApp con messaggio precompilato (`wa.me`). Pagamento di
+persona a fine trattamento.
 
 Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 (template asporto), adattato alla tipologia **prenotazioni**.
