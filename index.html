@@ -26,10 +26,14 @@
 
 <div id="load-error" class="error-box" hidden></div>
 
+<p class="muted small hint-trattamenti">Scegli un trattamento: si prenota un solo trattamento alla volta.</p>
+<p id="menu-avviso" class="avviso" hidden></p>
+
 <main id="menu"></main>
 
 <footer class="foot">
   <p class="muted small">Tariffa: 40 € all'ora, per ogni trattamento.</p>
+  <p class="muted small">💶 Pagamento di persona a fine trattamento.</p>
   <p class="muted small">La fascia oraria scelta è una preferenza: giorni e orari definitivi si concordano in chat WhatsApp. La conferma arriva in chat.</p>
 </footer>
 
@@ -51,6 +55,7 @@
   <div id="righe"></div>
 
   <div id="totali" class="totali"></div>
+  <p class="muted small">💶 Pagamento di persona a fine trattamento.</p>
 
   <form id="ordine-form" novalidate>
     <h3>I tuoi dati</h3>
@@ -63,13 +68,7 @@
       <input type="tel" id="f-telefono" autocomplete="tel" placeholder="Es. 345 111 4337" required>
     </label>
 
-    <fieldset class="modalita">
-      <legend>Dove vuoi ricevere il trattamento? *</legend>
-      <label class="radio-pill"><input type="radio" name="modalita" value="domicilio" checked> 🚗 A domicilio</label>
-      <label class="radio-pill"><input type="radio" name="modalita" value="studio"> 🏠 In studio</label>
-    </fieldset>
-
-    <label id="wrap-indirizzo">Indirizzo (per il domicilio) *
+    <label id="wrap-indirizzo">Indirizzo *
       <input type="text" id="f-indirizzo" autocomplete="street-address" placeholder="Via, numero, località">
     </label>
 
