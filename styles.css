@@ -82,6 +82,22 @@ body {
   flex-shrink: 0;
 }
 .btn-add:active { background: var(--primario-scuro); transform: scale(0.95); }
+.prod-azioni { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.btn-remove {
+  background: #fff;
+  color: var(--primario);
+  border: 2px solid var(--primario);
+  border-radius: 50%;
+  width: 38px; height: 38px;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.btn-remove:active { transform: scale(0.95); }
+.btn-add:disabled, .btn-remove:disabled { opacity: 0.25; cursor: default; }
+.btn-add.in-cart { background: var(--primario-scuro); }
+.hint-trattamenti { padding: 0 16px; }
 .prodotto.non-disponibile { opacity: 0.45; }
 .prodotto.non-disponibile .btn-add { background: var(--muted); pointer-events: none; }
 
