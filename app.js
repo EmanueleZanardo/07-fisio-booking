@@ -1,7 +1,7 @@
 'use strict';
 /* =====================================================================
  * Fisio-booking — prenotazioni visite fisioterapiche via WhatsApp (wa.me).
- * Derivato dal template booking-system (EmanueleZanardo/booking-system).
+ * Derivato dal template booking-system.
  * MAI inviare messaggi WhatsApp veri da qui: si apre solo wa.me con
  * testo precompilato; l'invio lo fa l'utente toccando "Invia" in WhatsApp.
  * ===================================================================== */
