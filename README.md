@@ -12,7 +12,7 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 ## Dati attività
 
 - **Nome:** Roberta — Fisioterapista
-- **Tariffa:** 40 €/ora per ogni trattamento
+- **Tariffa:** 40 € a seduta da 45 minuti, per ogni trattamento
 - **Zone:** provincia di Varese + Canton Ticino (a sud di Lugano)
 - **WhatsApp prenotazioni:** +39 345 111 4337 (numero reale, `demo: false`)
 - **Orari:** giorni e orari definitivi da concordare in chat; gli slot proposti
@@ -31,6 +31,9 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 ├── index.html                 # pagina di prenotazione
 ├── app.js                     # logica: trattamenti, riepilogo, form, messaggio wa.me
 ├── styles.css                 # mobile-first (tema teal)
+├── favicon.svg                # icona sito (croce su sfondo teal)
+├── og-image.png               # immagine anteprima link (WhatsApp/Facebook)
+├── robots.txt / sitemap.xml   # SEO di base
 ├── tenant.json                # TEMPLATE per nuovi tenant
 ├── tenants/
 │   └── roberta-fisioterapista.json  # configurazione attività
@@ -50,4 +53,26 @@ Il tenant si sceglie con `?tenant=<slug>` (default: `roberta-fisioterapista`).
 
 ## Deploy
 
-Sito statico — pubblicato su GitHub Pages da `main`.
+Sito statico — pubblicato su Vercel da `main` (ogni push su `main`
+fa ripartire il deploy automaticamente).
+
+## Chiusure straordinarie (es. Natale, Capodanno)
+
+Il campo `chiusureStraordinarie` in `tenants/roberta-fisioterapista.json`
+contiene le date di chiusura in formato `YYYY-MM-DD`; il sito non propone
+slot in quei giorni.
+
+Procedura (nessun backend, ~2 minuti):
+1. Apri `tenants/roberta-fisioterapista.json` su GitHub e premi ✏️ (modifica).
+2. Aggiungi le date all'array, es.: `"chiusureStraordinarie": ["2026-12-25", "2026-12-26", "2027-01-01"]`.
+3. Commit su `main` → Vercel ridistribuisce da solo in 1–2 minuti.
+
+## Analytics (senza cookie)
+
+Il sito usa **Vercel Web Analytics** (gratis, senza cookie, niente banner):
+lo snippet è già in `index.html`. Va solo **abilitato una volta nel
+dashboard del progetto Vercel** (Analytics → Enable).
+
+Eventi tracciati:
+- `prenotazione_whatsapp` — click su "Prenota via WhatsApp" con `orderId`
+  (serve a misurare quante visite dagli annunci diventano richieste).
