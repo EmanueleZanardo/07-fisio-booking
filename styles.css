@@ -262,3 +262,43 @@ body {
   font-weight: 600;
   color: var(--primario);
 }
+
+/* ---------- Schermata di conferma post-prenotazione ---------- */
+#conferma-sfondo {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 80;
+}
+#conferma-sfondo[hidden] { display: none; }
+#conferma[hidden] { display: none; }
+#conferma {
+  position: fixed; inset: 0;
+  z-index: 81;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+}
+.conferma-box {
+  pointer-events: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.conferma-icona { font-size: 3rem; margin-bottom: 8px; }
+.conferma-box h2 { margin: 0 0 10px; font-size: 1.25rem; }
+.conferma-box p { margin: 8px 0; }
+#conferma-chiudi {
+  margin-top: 10px;
+  background: none;
+  border: 1px solid var(--muted, #9aa);
+  border-radius: var(--raggio, 12px);
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+}
