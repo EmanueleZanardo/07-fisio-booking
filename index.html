@@ -5,7 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prenota una visita — Roberta · Fisioterapista</title>
 <meta name="description" content="Prenota online una seduta di fisioterapia con Roberta, dedicata alle persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. A domicilio in provincia di Varese e in Ticino (a sud di Lugano).">
+<link rel="canonical" href="https://fisio-roberta.vercel.app/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0E7C6B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Roberta — Fisioterapista">
+<meta property="og:title" content="Prenota una visita — Roberta · Fisioterapista">
+<meta property="og:description" content="Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale. Varese e Ticino (a sud di Lugano). 40 € per seduta da 45 minuti.">
+<meta property="og:url" content="https://fisio-roberta.vercel.app/">
+<meta property="og:image" content="https://fisio-roberta.vercel.app/og-image.png">
+<meta property="og:locale" content="it_IT">
 <link rel="stylesheet" href="styles.css">
+<!-- Vercel Web Analytics (senza cookie): abilitarlo nel dashboard del progetto Vercel -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -91,5 +106,19 @@
 </section>
 
 <script src="app.js"></script>
+
+<!-- Schermata di conferma post-prenotazione -->
+<div id="conferma-sfondo" hidden></div>
+<section id="conferma" hidden role="alertdialog" aria-label="Richiesta preparata">
+  <div class="conferma-box">
+    <div class="conferma-icona">✅</div>
+    <h2>Richiesta preparata <span id="conferma-id"></span></h2>
+    <p>Si è aperto WhatsApp con il messaggio già pronto.<br>
+    Tocca <strong>Invia</strong> in WhatsApp per confermare la prenotazione.</p>
+    <p class="muted small">Se WhatsApp non si è aperto, riprova il pulsante qui sotto.</p>
+    <button id="conferma-riapri" class="cta" type="button">📲 Riapri WhatsApp</button>
+    <button id="conferma-chiudi" type="button">Chiudi</button>
+  </div>
+</section>
 </body>
 </html>
