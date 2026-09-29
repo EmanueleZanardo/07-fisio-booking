@@ -140,6 +140,7 @@ function buildWhatsUrl(tenant, message) {
 var tenant = null;
 var prodottiById = {};
 var carrello = {};   // id -> 1 (una sola prenotazione alla volta)
+var lastWhatsUrl = null; // ultimo wa.me generato (per "Riapri WhatsApp" dalla conferma)
 
 function $(id) { return document.getElementById(id); }
 
@@ -416,7 +417,35 @@ function bindUI() {
   $('drawer-chiudi').addEventListener('click', closeDrawer);
   $('drawer-sfondo').addEventListener('click', closeDrawer);
 
+  $('conferma-chiudi').addEventListener('click', hideConferma);
+  $('conferma-sfondo').addEventListener('click', hideConferma);
+  $('conferma-riapri').addEventListener('click', function () {
+    if (lastWhatsUrl) window.open(lastWhatsUrl, '_blank', 'noopener');
+  });
+
   $('ordine-form').addEventListener('submit', onSubmit);
+}
+
+/* Evento analytics (Vercel Web Analytics, senza cookie): mai bloccare la prenotazione */
+function trackPrenotazione(orderId) {
+  try {
+    if (typeof window !== 'undefined' && typeof window.va === 'function') {
+      window.va('event', { name: 'prenotazione_whatsapp', data: { orderId: orderId } });
+    }
+  } catch (e) { /* analytics opzionale */ }
+}
+
+/* Schermata di conferma post-prenotazione */
+function showConferma(orderId) {
+  $('conferma-id').textContent = '(' + orderId + ')';
+  $('conferma').hidden = false;
+  $('conferma-sfondo').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function hideConferma() {
+  $('conferma').hidden = true;
+  $('conferma-sfondo').hidden = true;
+  document.body.style.overflow = '';
 }
 
 function formError(msg) {
@@ -470,6 +499,9 @@ function onSubmit(ev) {
   }, 10000);
 
   window.open(url, '_blank', 'noopener');
+  lastWhatsUrl = url;
+  trackPrenotazione(orderId);
+  showConferma(orderId);
 }
 
 /* Avvio */
