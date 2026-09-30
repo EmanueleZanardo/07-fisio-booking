@@ -308,6 +308,39 @@ function renderOrarioSelect(slot) {
   });
 }
 
+/* "Prima disponibilità" — riduce l'attrito: il cliente vede subito quando
+ * Roberta può venire, senza scorrere le fasce. Usa la stessa logica di
+ * buildSlots; la selezione del trattamento non cambia gli orari, ma il
+ * ricalcolo gira anche a ogni cambio carrello (via renderCart) per sicurezza. */
+function aggiornaSlotHint() {
+  if (!tenant) return;
+  var sel = $('f-orario');
+  if (!sel) return;
+  var hint = $('slot-hint');
+  if (!hint) {
+    hint = document.createElement('p');
+    hint.id = 'slot-hint';
+    hint.className = 'slot-hint'; // lo stile lo fa il Builder 3
+    if (sel.parentNode) {
+      if (sel.nextSibling) sel.parentNode.insertBefore(hint, sel.nextSibling);
+      else sel.parentNode.appendChild(hint);
+    }
+  }
+  var slot = buildSlots(tenant, new Date());
+  if (!slot.length) {
+    hint.hidden = true;
+    return;
+  }
+  hint.hidden = false;
+  var primo = slot[0];
+  var offset = primo.giorno === 'Domani' ? 1 : 0;
+  var d = new Date();
+  d.setDate(d.getDate() + offset);
+  var giornoNome = primo.giorno === 'Oggi' ? 'oggi' :
+    (primo.giorno === 'Domani' ? 'domani' : GIORNI_NOME[GIORNI[d.getDay()]]);
+  hint.textContent = 'Prima disponibilità: ' + giornoNome + ' ' + primo.valore;
+}
+
 function cartRighe() {
   return Object.keys(carrello).map(function (id) {
     var p = prodottiById[id];
@@ -399,6 +432,8 @@ function renderCart() {
     tot.appendChild(d);
   }
   tRiga('Totale stimato (' + fmtEUR(40) + ' / seduta da 45 min)', fmtEUR(sub), true);
+
+  aggiornaSlotHint();
 }
 
 function openDrawer() {
@@ -459,8 +494,20 @@ function onSubmit(ev) {
   ev.preventDefault();
   formError(null);
 
+  /* Anti doppio-invio: disabilita il bottone durante la gestione della
+   * prenotazione e lo riabilita dopo l'apertura di WhatsApp (o subito in
+   * caso di errore di validazione). */
+  var btn = $('btn-ordina');
+  btn.disabled = true;
+  var orig = btn.textContent;
+  btn.textContent = 'Messaggio preparato — completalo in WhatsApp…';
+  function sbloccaBtn() {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+
   var righe = cartRighe();
-  if (!righe.length) { formError('Nessun trattamento selezionato: aggiungine uno.'); return; }
+  if (!righe.length) { formError('Nessun trattamento selezionato: aggiungine uno.'); sbloccaBtn(); return; }
 
   var nome = $('f-nome').value.trim();
   var telefono = $('f-telefono').value.trim();
@@ -468,11 +515,12 @@ function onSubmit(ev) {
   var orario = $('f-orario').value;
   var note = $('f-note').value;
 
-  if (!nome) { formError('Inserisci il tuo nome.'); $('f-nome').focus(); return; }
-  if (!telefono) { formError('Inserisci il tuo numero di telefono.'); $('f-telefono').focus(); return; }
+  if (!nome) { formError('Inserisci il tuo nome.'); $('f-nome').focus(); sbloccaBtn(); return; }
+  if (!telefono) { formError('Inserisci il tuo numero di telefono.'); $('f-telefono').focus(); sbloccaBtn(); return; }
   if (!indirizzo) {
     formError('Inserisci l\u2019indirizzo dove ricevere il trattamento.');
     $('f-indirizzo').focus();
+    sbloccaBtn();
     return;
   }
 
@@ -485,20 +533,12 @@ function onSubmit(ev) {
 
   if (url.length > MAX_URL_LEN) {
     formError('Prenotazione troppo lunga per WhatsApp: chiamaci al +' + tenant.whatsapp + ' per completarla.');
+    sbloccaBtn();
     return;
   }
 
-  // Anti doppio-invio — disabilita 10 secondi
-  var btn = $('btn-ordina');
-  btn.disabled = true;
-  var orig = btn.textContent;
-  btn.textContent = 'Messaggio preparato — completalo in WhatsApp…';
-  setTimeout(function () {
-    btn.disabled = false;
-    btn.textContent = orig;
-  }, 10000);
-
   window.open(url, '_blank', 'noopener');
+  sbloccaBtn();
   lastWhatsUrl = url;
   trackPrenotazione(orderId);
   showConferma(orderId);
