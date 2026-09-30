@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flyer A5 — Fisioterapia a domicilio</title>
+<style>
+  /* Foglio A5 verticale (148 x 210 mm), stampabile. Leggibile anche in B/N. */
+  @page {
+    size: A5 portrait;
+    margin: 8mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 16px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #E5E7EB;
+    color: #111;
+  }
+
+  .foglio {
+    width: 148mm;
+    min-height: 210mm;
+    margin: 0 auto;
+    background: #F7FAF9;
+    border: 3px solid #0E7C6B;
+    padding: 10mm 9mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .intestazione { text-align: center; margin-bottom: 6mm; }
+  .intestazione .kicker {
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #0E7C6B;
+    margin: 0 0 2mm;
+  }
+  .intestazione h1 {
+    font-size: 30pt;
+    line-height: 1.1;
+    margin: 0 0 2mm;
+    color: #0E7C6B;
+  }
+  .intestazione .nome {
+    font-size: 15pt;
+    font-weight: 800;
+    margin: 0;
+  }
+  .intestazione .sottotitolo {
+    font-size: 11pt;
+    margin: 1mm 0 0;
+  }
+
+  .trattamenti {
+    border: 2px solid #0E7C6B;
+    background: #FFFFFF;
+    margin-bottom: 5mm;
+  }
+  .trattamenti h2 {
+    font-size: 13pt;
+    margin: 0;
+    padding: 2.5mm 4mm;
+    background: #0E7C6B;
+    color: #FFFFFF;
+  }
+  .trattamenti ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .trattamenti li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4mm;
+    padding: 2.6mm 4mm;
+    font-size: 11.5pt;
+    font-weight: 600;
+    border-bottom: 1px solid #D1D5DB;
+  }
+  .trattamenti li:last-child { border-bottom: none; }
+  .trattamenti .prezzo {
+    white-space: nowrap;
+    font-weight: 800;
+    font-size: 12.5pt;
+  }
+
+  .zone {
+    text-align: center;
+    font-size: 11.5pt;
+    font-weight: 700;
+    margin: 0 0 5mm;
+  }
+  .zone span { display: block; font-weight: 400; font-size: 10pt; margin-top: 1mm; }
+
+  .whatsapp {
+    background: #0E7C6B;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 4mm;
+    margin-bottom: 5mm;
+  }
+  .whatsapp .etichetta {
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 0 0 1mm;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .whatsapp a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  .riquadro-prenota {
+    border: 3px dashed #0E7C6B;
+    background: #FFFFFF;
+    text-align: center;
+    padding: 4mm 3mm;
+    margin-bottom: 5mm;
+  }
+  .riquadro-prenota .etichetta {
+    font-size: 12pt;
+    font-weight: 800;
+    margin: 0 0 2mm;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0E7C6B;
+  }
+  .riquadro-prenota .url {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12pt;
+    font-weight: 700;
+    word-break: break-all;
+    margin: 0;
+  }
+
+  .sito {
+    text-align: center;
+    font-size: 11.5pt;
+    margin: 0 0 4mm;
+  }
+  .sito a {
+    color: #0E7C6B;
+    font-weight: 800;
+    text-decoration: underline;
+    word-break: break-all;
+  }
+
+  .nota-pagamento {
+    margin: auto 0 0;
+    text-align: center;
+    font-size: 11pt;
+    font-weight: 700;
+    border-top: 2px solid #0E7C6B;
+    padding-top: 3mm;
+  }
+  .nota-pagamento .piccolo {
+    display: block;
+    font-weight: 400;
+    font-size: 9.5pt;
+    margin-top: 1mm;
+  }
+
+  .no-print { text-align: center; margin-bottom: 12px; }
+  .no-print button {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    background: #0E7C6B;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .no-print { display: none; }
+    .foglio {
+      margin: 0;
+      width: auto;
+      min-height: auto;
+      border-width: 2.5mm;
+      box-shadow: none;
+    }
+    /* stampa i colori di sfondo dei blocchi principali */
+    .trattamenti h2, .whatsapp {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <button type="button" onclick="window.print()">🖨️ Stampa il flyer (formato A5)</button>
+</div>
+
+<div class="foglio">
+  <header class="intestazione">
+    <p class="kicker">Fisioterapia a domicilio</p>
+    <h1>Fisioterapia<br>a domicilio</h1>
+    <p class="nome">Roberta — Fisioterapista</p>
+    <p class="sottotitolo">Sedute dedicate alle persone anziane, a casa tua</p>
+  </header>
+
+  <section class="trattamenti" aria-label="Trattamenti e prezzi">
+    <h2>Trattamenti</h2>
+    <ul>
+      <li><span>Riabilitazione ortopedica / post-infortunio</span><span class="prezzo">40&nbsp;€ / 45&nbsp;min</span></li>
+      <li><span>Dolori muscolari e articolari</span><span class="prezzo">40&nbsp;€ / 45&nbsp;min</span></li>
+      <li><span>Ginnastica posturale</span><span class="prezzo">40&nbsp;€ / 45&nbsp;min</span></li>
+      <li><span>Massoterapia</span><span class="prezzo">40&nbsp;€ / 45&nbsp;min</span></li>
+    </ul>
+  </section>
+
+  <p class="zone">
+    📍 Provincia di Varese · Canton Ticino (a sud di Lugano)
+    <span>Solo a domicilio — l'indirizzo è sempre richiesto</span>
+  </p>
+
+  <div class="whatsapp">
+    <p class="etichetta">📲 Prenota su WhatsApp</p>
+    <a href="https://wa.me/393451114337">+39 345 111 4337</a>
+  </div>
+
+  <div class="riquadro-prenota">
+    <p class="etichetta">Scansiona per prenotare</p>
+    <p class="url">https://wa.me/393451114337</p>
+  </div>
+
+  <p class="sito">
+    Prenota dal sito:<br>
+    <a href="https://fisio-roberta.vercel.app/">https://fisio-roberta.vercel.app/</a>
+  </p>
+
+  <p class="nota-pagamento">
+    💶 Pagamento di persona a fine trattamento
+    <span class="piccolo">Giorno e orario definitivi si concordano in chat WhatsApp</span>
+  </p>
+</div>
+
+</body>
+</html>
