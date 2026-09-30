@@ -457,3 +457,181 @@ body {
   outline-width: 3px;
   outline-offset: 2px;
 }
+
+/* ciclo2-recensioni */
+.recensioni {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+}
+.recensioni > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 8px;
+}
+.recensioni-sottotitolo {
+  font-size: 0.92rem;
+  color: var(--testo);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+.recensioni-placeholder {
+  border: 1px dashed var(--bordo);
+  border-radius: var(--raggio);
+  background: #fff;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 14px;
+}
+.recensione {
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  background: #fff;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.recensione-stelle {
+  color: #D9A520;
+  letter-spacing: 2px;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.recensione p {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.recensione-autore {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.recensioni-cta {
+  display: inline-block;
+  background: var(--primario);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 12px 22px;
+  margin-bottom: 8px;
+  min-height: 48px;
+}
+.recensioni-cta:active {
+  background: var(--primario-scuro);
+}
+.recensioni-cta:focus-visible {
+  outline-width: 3px;
+  outline-offset: 2px;
+}
+
+/* =====================================================================
+ * ciclo2-ux-mobile — migliorie UX prenotazione mobile (step indicator,
+ * validazione inline, tastiera mobile, stato caricamento, accessibilità)
+ * ===================================================================== */
+
+/* ---------- Step indicator nel drawer ---------- */
+.drawer-steps {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 2px 0 12px;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid var(--bordo);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.ds-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.ds-step:not(:last-child)::after {
+  content: "→";
+  margin-left: auto;
+  margin-right: 4px;
+  color: var(--bordo);
+  font-weight: 800;
+}
+.ds-num {
+  flex: 0 0 auto;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--bordo);
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.ds-label { line-height: 1.2; }
+.ds-step.is-attivo .ds-num {
+  background: var(--primario);
+  border-color: var(--primario);
+  color: #fff;
+}
+.ds-step.is-attivo .ds-label {
+  color: var(--primario-scuro);
+  font-weight: 800;
+}
+.ds-step.is-completato .ds-num {
+  border-color: var(--primario);
+  background: #E6F4F1;
+  color: var(--primario);
+  font-size: 0; /* sostituisce il numero con la spunta */
+}
+.ds-step.is-completato .ds-num::after {
+  content: "✓";
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.ds-step.is-completato .ds-label { color: var(--primario-scuro); }
+
+/* ---------- Validazione inline: errori sotto i campi ---------- */
+.campo-err {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #B91C1C;
+}
+.campo-err[hidden] { display: none; }
+#ordine-form input.is-errore,
+#ordine-form select.is-errore,
+#ordine-form textarea.is-errore {
+  border: 2px solid #B91C1C;
+  background: #FFF7F7;
+}
+#ordine-form input.is-errore:focus,
+#ordine-form select.is-errore:focus,
+#ordine-form textarea.is-errore:focus {
+  outline: 2px solid #B91C1C;
+  outline-offset: 1px;
+  border-color: #B91C1C;
+}
+
+/* ---------- Pulsante WhatsApp: stato di caricamento ---------- */
+#btn-ordina.is-caricamento {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+/* ---------- Drawer usabile con tastiera mobile aperta ---------- */
+#drawer {
+  max-height: 92vh;
+  max-height: 92dvh; /* segue il viewport visivo quando si apre la tastiera */
+  overscroll-behavior: contain; /* niente scroll "a catena" del body */
+}
+@media (max-width: 480px) {
+  #drawer {
+    /* spazio per il bordo inferiore dei telefoni con notch/gesture bar */
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ---------- Accessibilità: focus chiaro sullo step indicator ---------- */
+#drawer-steps:focus-within { outline: none; }
