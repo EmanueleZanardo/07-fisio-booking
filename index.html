@@ -3,18 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prenota una visita — Roberta · Fisioterapista</title>
-<meta name="description" content="Prenota online una seduta di fisioterapia con Roberta, dedicata alle persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. A domicilio in provincia di Varese e in Ticino (a sud di Lugano).">
+<title>Fisioterapista a domicilio Varese e Ticino — Prenota con Roberta</title>
+<meta name="description" content="Prenota una seduta di fisioterapia a domicilio con Roberta: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona. Varese e Ticino (a sud di Lugano).">
 <link rel="canonical" href="https://fisio-roberta.vercel.app/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#0E7C6B">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Roberta — Fisioterapista">
-<meta property="og:title" content="Prenota una visita — Roberta · Fisioterapista">
+<meta property="og:title" content="Fisioterapista a domicilio Varese e Ticino — Prenota con Roberta">
 <meta property="og:description" content="Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale. Varese e Ticino (a sud di Lugano). 40 € per seduta da 45 minuti.">
 <meta property="og:url" content="https://fisio-roberta.vercel.app/">
 <meta property="og:image" content="https://fisio-roberta.vercel.app/og-image.png">
 <meta property="og:locale" content="it_IT">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Physiotherapy",
+  "name": "Roberta — Fisioterapista",
+  "url": "https://fisio-roberta.vercel.app/",
+  "telephone": "+39 345 111 4337",
+  "priceRange": "€€",
+  "areaServed": ["Provincia di Varese", "Canton Ticino"],
+  "description": "Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona a fine trattamento.",
+  "paymentAccepted": "Cash",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "09:00",
+      "closes": "13:00"
+    }
+  ]
+}
+</script>
 <link rel="stylesheet" href="styles.css">
 <!-- Vercel Web Analytics (senza cookie): abilitarlo nel dashboard del progetto Vercel -->
 <script>
@@ -47,6 +74,44 @@
 <p id="menu-avviso" class="avviso" hidden></p>
 
 <main id="menu"></main>
+
+<section class="come-funziona" aria-label="Come funziona">
+  <h2>Come funziona</h2>
+  <ol class="passaggi">
+    <li>
+      <strong>Scegli il trattamento</strong>
+      <p>Tocca un trattamento dal menù: si prenota un solo trattamento alla volta.</p>
+    </li>
+    <li>
+      <strong>Compila i tuoi dati (nome, telefono, indirizzo)</strong>
+      <p>L'indirizzo è obbligatorio: le visite sono solo a domicilio.</p>
+    </li>
+    <li>
+      <strong>Conferma su WhatsApp toccando Invia</strong>
+      <p>Si apre WhatsApp con il messaggio già pronto; giorno e orario definitivi si concordano in chat.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="faq" aria-label="Domande frequenti">
+  <h2>Domande frequenti</h2>
+  <details class="faq-item">
+    <summary>Quanto costa una seduta?</summary>
+    <p>40 € per seduta da 45 minuti, per ogni trattamento. Il pagamento avviene di persona a fine trattamento.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Dove avvengono le visite?</summary>
+    <p>Solo a domicilio, in provincia di Varese e in Canton Ticino (a sud di Lugano). L'indirizzo è sempre richiesto al momento della prenotazione.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Come avviene la conferma della prenotazione?</summary>
+    <p>Dopo aver compilato il modulo si apre WhatsApp con il messaggio già pronto: tocca Invia per confermare la prenotazione. La fascia oraria scelta è solo una preferenza: giorno e orario definitivi si concordano in chat.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Come si paga?</summary>
+    <p>Di persona, a fine trattamento.</p>
+  </details>
+</section>
 
 <footer class="foot">
   <p class="muted small">Tariffa: 40 € per seduta da 45 minuti, per ogni trattamento.</p>
