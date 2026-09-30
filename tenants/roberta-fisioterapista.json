@@ -90,6 +90,7 @@
             "prezzo": 40.0
         }
     ],
+    "recensioni": [],
     "slug": "roberta-fisioterapista",
     "tariffaSeduta": 40.0,
     "tipo": "prenotazioni",
