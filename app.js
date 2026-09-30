@@ -440,11 +440,25 @@ function openDrawer() {
   $('drawer').hidden = false;
   $('drawer-sfondo').hidden = false;
   document.body.style.overflow = 'hidden';
+  // ciclo2-ux-mobile: passo dello step indicator, focus iniziale, ESC + focus trap
+  ciclo2LastFocus = document.activeElement;
+  var haDati = ['f-nome', 'f-telefono', 'f-indirizzo', 'f-note'].some(function (id) {
+    return $(id).value.trim() !== '';
+  });
+  ciclo2SetStep(haDati ? 2 : 1);
+  $('drawer').focus();
+  document.addEventListener('keydown', ciclo2Keydown);
 }
 function closeDrawer() {
   $('drawer').hidden = true;
   $('drawer-sfondo').hidden = true;
   document.body.style.overflow = '';
+  // ciclo2-ux-mobile: rimuove i listener e ripristina il focus sul trigger
+  document.removeEventListener('keydown', ciclo2Keydown);
+  if (ciclo2LastFocus && typeof ciclo2LastFocus.focus === 'function') {
+    try { ciclo2LastFocus.focus(); } catch (e) { /* focus opzionale */ }
+  }
+  ciclo2LastFocus = null;
 }
 
 function bindUI() {
@@ -459,6 +473,28 @@ function bindUI() {
   });
 
   $('ordine-form').addEventListener('submit', onSubmit);
+
+  // ciclo2-ux-mobile: validazione live + passo 2 allo step indicator + scroll tastiera
+  var form = $('ordine-form');
+  Object.keys(CICLO2_CAMPI).forEach(function (id) {
+    var input = $(id);
+    input.addEventListener('blur', function () {
+      ciclo2Touched[id] = true;
+      ciclo2ValidaCampo(id);
+    });
+    input.addEventListener('input', function () {
+      if (ciclo2Touched[id]) ciclo2ValidaCampo(id);
+    });
+  });
+  form.addEventListener('focusin', function (ev) {
+    var tag = ev.target && ev.target.tagName;
+    if (tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') return;
+    ciclo2SetStep(2);
+    // tiene il campo visibile sopra la tastiera mobile
+    setTimeout(function () {
+      try { ev.target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { /* scroll opzionale */ }
+    }, 350);
+  });
 }
 
 /* Evento analytics (Vercel Web Analytics, senza cookie): mai bloccare la prenotazione */
@@ -494,35 +530,53 @@ function onSubmit(ev) {
   ev.preventDefault();
   formError(null);
 
-  /* Anti doppio-invio: disabilita il bottone durante la gestione della
-   * prenotazione e lo riabilita dopo l'apertura di WhatsApp (o subito in
-   * caso di errore di validazione). */
+  /* ciclo2-ux-mobile: guardia anti-doppio-invio migliorata (non duplicata).
+   * Flag + cooldown dopo l'invio riuscito: window.open è asincrona, quindi
+   * riabilitare subito il bottone permetterebbe un secondo tap. */
+  if (ciclo2InvioInCorso) return;
+  ciclo2InvioInCorso = true;
   var btn = $('btn-ordina');
   btn.disabled = true;
+  btn.classList.add('is-caricamento');
   var orig = btn.textContent;
   btn.textContent = 'Messaggio preparato — completalo in WhatsApp…';
-  function sbloccaBtn() {
-    btn.disabled = false;
-    btn.textContent = orig;
+  function sbloccaBtn(cooldownMs) {
+    function riabilita() {
+      btn.disabled = false;
+      btn.classList.remove('is-caricamento');
+      btn.textContent = orig;
+      ciclo2InvioInCorso = false;
+    }
+    if (cooldownMs) setTimeout(riabilita, cooldownMs);
+    else riabilita();
   }
 
   var righe = cartRighe();
   if (!righe.length) { formError('Nessun trattamento selezionato: aggiungine uno.'); sbloccaBtn(); return; }
+
+  /* ciclo2-ux-mobile: validazione inline estesa (nome min 2 caratteri,
+   * telefono con pattern IT/CH tollerante, indirizzo obbligatorio).
+   * Focus automatico sul primo campo errato. */
+  var ids = ['f-nome', 'f-telefono', 'f-indirizzo'];
+  var primoErrore = null;
+  ids.forEach(function (id) {
+    ciclo2Touched[id] = true;
+    if (!ciclo2ValidaCampo(id) && !primoErrore) primoErrore = id;
+  });
+  if (primoErrore) {
+    formError('Controlla i campi evidenziati in rosso.');
+    $(primoErrore).focus();
+    sbloccaBtn();
+    return;
+  }
+
+  ciclo2SetStep(3); // passo "Conferma su WhatsApp"
 
   var nome = $('f-nome').value.trim();
   var telefono = $('f-telefono').value.trim();
   var indirizzo = $('f-indirizzo').value.trim();
   var orario = $('f-orario').value;
   var note = $('f-note').value;
-
-  if (!nome) { formError('Inserisci il tuo nome.'); $('f-nome').focus(); sbloccaBtn(); return; }
-  if (!telefono) { formError('Inserisci il tuo numero di telefono.'); $('f-telefono').focus(); sbloccaBtn(); return; }
-  if (!indirizzo) {
-    formError('Inserisci l\u2019indirizzo dove ricevere il trattamento.');
-    $('f-indirizzo').focus();
-    sbloccaBtn();
-    return;
-  }
 
   var orderId = genOrderId();
   var message = buildMessage(tenant, righe, {
@@ -538,10 +592,110 @@ function onSubmit(ev) {
   }
 
   window.open(url, '_blank', 'noopener');
-  sbloccaBtn();
+  sbloccaBtn(2500); // cooldown anti-doppio-tap (ciclo2-ux-mobile)
   lastWhatsUrl = url;
   trackPrenotazione(orderId);
   showConferma(orderId);
+}
+
+/* =====================================================================
+ * ciclo2-ux-mobile — step indicator, validazione inline, ESC + focus trap
+ * ===================================================================== */
+var ciclo2LastFocus = null;    // elemento a cui restituire il focus alla chiusura
+var ciclo2InvioInCorso = false; // guardia anti-doppio-invio migliorata
+
+/* Passo attivo dello step indicator nel drawer (1 Riepilogo → 2 I tuoi
+ * dati → 3 Conferma su WhatsApp), con aria-current per gli screen reader. */
+function ciclo2SetStep(n) {
+  var passi = document.querySelectorAll('#drawer-steps .ds-step');
+  Array.prototype.forEach.call(passi, function (li) {
+    var p = parseInt(li.getAttribute('data-passo'), 10);
+    li.classList.toggle('is-attivo', p === n);
+    li.classList.toggle('is-completato', p < n);
+    if (p === n) li.setAttribute('aria-current', 'step');
+    else li.removeAttribute('aria-current');
+  });
+}
+
+/* Validatori per campo: estendono (non rompono) i controlli esistenti. */
+var CICLO2_CAMPI = {
+  'f-nome': {
+    err: 'f-nome-err',
+    valida: function (v) {
+      if (!v) return 'Inserisci il tuo nome.';
+      if (v.length < 2) return 'Il nome deve avere almeno 2 caratteri.';
+      return null;
+    }
+  },
+  'f-telefono': {
+    err: 'f-telefono-err',
+    valida: function (v) {
+      if (!v) return 'Inserisci il tuo numero di telefono.';
+      var cifre = v.replace(/\D/g, '');
+      // pattern IT/CH tollerante: +, spazi, punti, trattini, slash, parentesi
+      var ok = /^[+(\s]{0,3}\d[\d\s.\-()/]*$/.test(v) && cifre.length >= 6 && cifre.length <= 15;
+      if (!ok) return 'Numero non valido: usa un numero italiano o svizzero, es. 345 111 4337 o +41 91 123 45 67.';
+      return null;
+    }
+  },
+  'f-indirizzo': {
+    err: 'f-indirizzo-err',
+    valida: function (v) {
+      if (!v) return 'Inserisci l\u2019indirizzo dove ricevere il trattamento.';
+      if (v.length < 4) return 'Indirizzo troppo corto: indica via, numero civico e località.';
+      return null;
+    }
+  }
+};
+var ciclo2Touched = {};
+
+function ciclo2MostraErrore(id, msg) {
+  var input = $(id);
+  var e = $(CICLO2_CAMPI[id].err);
+  if (msg) {
+    input.classList.add('is-errore');
+    input.setAttribute('aria-invalid', 'true');
+    e.hidden = false;
+    e.textContent = msg;
+  } else {
+    input.classList.remove('is-errore');
+    input.removeAttribute('aria-invalid');
+    e.hidden = true;
+    e.textContent = '';
+  }
+}
+
+function ciclo2ValidaCampo(id) {
+  var msg = CICLO2_CAMPI[id].valida($(id).value.trim());
+  ciclo2MostraErrore(id, msg);
+  return !msg;
+}
+
+/* ESC chiude il drawer; Tab resta intrappolato nel drawer (focus trap leggera). */
+function ciclo2Keydown(ev) {
+  if ($('drawer').hidden) return;
+  if (ev.key === 'Escape' || ev.key === 'Esc') {
+    ev.preventDefault();
+    closeDrawer();
+    return;
+  }
+  if (ev.key !== 'Tab') return;
+  if (!$('conferma').hidden) return; // la schermata di conferma ha la priorità
+  var drawer = $('drawer');
+  var focusables = drawer.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), ' +
+    'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  );
+  if (!focusables.length) return;
+  var first = focusables[0];
+  var last = focusables[focusables.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
 }
 
 /* Avvio */
@@ -565,3 +719,49 @@ if (typeof module !== 'undefined' && module.exports) {
     MAX_RIGHE_MSG: MAX_RIGHE_MSG
   };
 }
+
+// ciclo2-recensioni
+function renderRecensioni() {
+  var box = document.getElementById('recensioni-lista');
+  if (!box) return;
+  var recs = (typeof tenant !== 'undefined' && tenant && Array.isArray(tenant.recensioni)) ? tenant.recensioni : [];
+  box.innerHTML = '';
+  if (recs.length === 0) {
+    var ph = document.createElement('div');
+    ph.className = 'recensioni-placeholder';
+    ph.textContent = 'Ancora nessuna recensione pubblicata.';
+    box.appendChild(ph);
+    return;
+  }
+  recs.forEach(function (r) {
+    var art = document.createElement('article');
+    art.className = 'recensione';
+    var stelle = document.createElement('div');
+    stelle.className = 'recensione-stelle';
+    var n = Math.max(0, Math.min(5, parseInt(r.stelle, 10) || 0));
+    stelle.textContent = '★'.repeat(n) + '☆'.repeat(5 - n);
+    stelle.setAttribute('aria-label', n + ' su 5 stelle');
+    art.appendChild(stelle);
+    var txt = document.createElement('p');
+    txt.textContent = r.testo || '';
+    art.appendChild(txt);
+    var autore = document.createElement('p');
+    autore.className = 'recensione-autore';
+    autore.textContent = (r.nome || 'Paziente') + (r.data ? ' — ' + r.data : '');
+    art.appendChild(autore);
+    box.appendChild(art);
+  });
+}
+
+// Avvio del rendering recensioni una volta che il tenant è stato caricato (additivo: non tocca init)
+(function () {
+  if (typeof document === 'undefined') return;
+  var tentativi = 0;
+  function avvia() {
+    if (typeof tenant !== 'undefined' && tenant) { renderRecensioni(); return; }
+    tentativi++;
+    if (tentativi < 100) setTimeout(avvia, 100);
+    else renderRecensioni(); // fallback: mostra comunque il placeholder
+  }
+  document.addEventListener('DOMContentLoaded', avvia);
+})();
