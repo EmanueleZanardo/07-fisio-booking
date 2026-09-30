@@ -302,3 +302,158 @@ body {
   font-size: 1rem;
   cursor: pointer;
 }
+
+/* ---------- Come funziona (3 passi) ---------- */
+.come-funziona {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+}
+.come-funziona > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 12px;
+}
+.passaggi {
+  list-style: none;
+  counter-reset: passo;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.passaggi li {
+  counter-increment: passo;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #F7FAF9;
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  padding: 14px 14px;
+  font-size: 0.95rem;
+  min-height: 56px; /* tap target comodo */
+}
+.passaggi li::before {
+  content: counter(passo);
+  flex: 0 0 30px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--primario);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.passaggi li b, .passaggi li strong { color: var(--primario-scuro); }
+.passaggi li p { margin: 4px 0 0; }
+@media (min-width: 520px) {
+  .passaggi { grid-template-columns: 1fr 1fr 1fr; }
+  .passaggi li { flex-direction: column; gap: 8px; }
+  .passaggi li::before { flex-basis: auto; }
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+}
+.faq > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 12px;
+}
+.faq-item {
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  background: #fff;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.faq-item summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-height: 48px; /* tap target comodo */
+  -webkit-tap-highlight-color: transparent;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #E6F4F1;
+  color: var(--primario);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.faq-item[open] {
+  border-color: var(--primario);
+  background: #F7FAF9;
+  box-shadow: 0 2px 8px rgba(14, 124, 107, 0.12);
+}
+.faq-item[open] summary::after {
+  content: "–";
+  background: var(--primario);
+  color: #fff;
+}
+.faq-item summary + p {
+  margin: 0;
+  padding: 0 16px 14px;
+  font-size: 0.92rem;
+  color: var(--testo);
+  line-height: 1.5;
+}
+
+/* ---------- Suggerimento fascia oraria ---------- */
+.slot-hint {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: var(--primario);
+  font-weight: 600;
+}
+
+/* ---------- Barra carrello sticky: CTA più evidente (mobile) ---------- */
+#cartbar {
+  padding: 16px 22px;
+  font-size: 1.05rem;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.32);
+}
+#cartbar .cartbar-cta {
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+  padding: 8px 14px;
+  text-decoration: none;
+}
+
+/* ---------- Focus visibili (accessibilità) ---------- */
+:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: 2px;
+}
+.btn-add:focus-visible,
+.btn-remove:focus-visible,
+#drawer-chiudi:focus-visible,
+.qty button:focus-visible,
+#cartbar:focus-visible,
+.cta:focus-visible {
+  outline-width: 3px;
+  outline-offset: 2px;
+}
