@@ -3,15 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fisioterapista a domicilio Varese e Ticino — Prenota con Roberta</title>
-<meta name="description" content="Prenota una seduta di fisioterapia a domicilio con Roberta: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona. Varese e Ticino (a sud di Lugano).">
+<title>Fisioterapista a domicilio Varese e Ticino | Roberta</title>
+<meta name="description" content="Fisioterapista a domicilio a Varese e in Ticino (sud Lugano). 4 trattamenti: riabilitazione, dolori muscolari, ginnastica posturale, massoterapia. 40 €/45 min.">
 <link rel="canonical" href="https://fisio-roberta.vercel.app/">
+<link rel="alternate" hreflang="it" href="https://fisio-roberta.vercel.app/">
+<meta name="geo.region" content="IT-VA">
+<meta name="geo.placename" content="Varese, Provincia di Varese">
+<meta name="geo.position" content="45.8189;8.8277">
+<meta name="ICBM" content="45.8189, 8.8277">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#0E7C6B">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Roberta — Fisioterapista">
-<meta property="og:title" content="Fisioterapista a domicilio Varese e Ticino — Prenota con Roberta">
-<meta property="og:description" content="Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale. Varese e Ticino (a sud di Lugano). 40 € per seduta da 45 minuti.">
+<meta property="og:title" content="Fisioterapista a domicilio Varese e Ticino | Roberta">
+<meta property="og:description" content="Fisioterapia a domicilio con Roberta: Varese e Ticino a sud di Lugano. 4 trattamenti, 40 € per seduta da 45 minuti, pagamento di persona a fine trattamento.">
 <meta property="og:url" content="https://fisio-roberta.vercel.app/">
 <meta property="og:image" content="https://fisio-roberta.vercel.app/og-image.png">
 <meta property="og:locale" content="it_IT">
@@ -22,8 +27,25 @@
   "name": "Roberta — Fisioterapista",
   "url": "https://fisio-roberta.vercel.app/",
   "telephone": "+39 345 111 4337",
-  "priceRange": "€€",
-  "areaServed": ["Provincia di Varese", "Canton Ticino"],
+  "priceRange": "40€",
+  "currenciesAccepted": "EUR",
+  "areaServed": [
+    { "@type": "City", "name": "Varese", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Gallarate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Busto Arsizio", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Saronno", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Tradate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Malnate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Arcisate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Induno Olona", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Mendrisio", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Chiasso", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Balerna", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Stabio", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Vacallo", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Morbio Inferiore", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Riva San Vitale", "addressRegion": "TI", "addressCountry": "CH" }
+  ],
   "description": "Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona a fine trattamento.",
   "paymentAccepted": "Cash",
   "openingHoursSpecification": [
@@ -48,6 +70,49 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+<style>
+/* ---------- Zone servite ---------- */
+.zone-servite {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+}
+.zone-servite > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 12px;
+}
+.zone-servite > p { font-size: 0.95rem; }
+.zone-colonne {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.zone-colonne h3 {
+  font-size: 0.95rem;
+  color: var(--primario-scuro);
+  margin: 0 0 6px;
+}
+.zone-colonne ul {
+  list-style: none;
+  margin: 0;
+  padding: 12px 14px;
+  background: #F7FAF9;
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  font-size: 0.93rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+}
+.zone-colonne ul li::before { content: "📍 "; }
+.zone-nota { margin-top: 10px; }
+@media (min-width: 520px) {
+  .zone-colonne { grid-template-columns: 1fr 1fr; }
+}
+</style>
 </head>
 <body>
 
@@ -93,24 +158,92 @@
   </ol>
 </section>
 
+<section class="zone-servite" id="zone-servite" aria-label="Zone servite">
+  <h2>Zone servite</h2>
+  <p>Roberta lavora <strong>solo a domicilio</strong>, in provincia di Varese e in Canton Ticino, nelle zone a sud di Lugano. Se cerchi un <strong>fisioterapista a domicilio a Varese</strong> o una <strong>fisioterapia a domicilio nel Mendrisiotto</strong>, la seduta si svolge direttamente a casa tua: l'indirizzo viene sempre concordato al momento della prenotazione. Riabilitazione, dolori muscolari e articolari, ginnastica posturale e massoterapia, sempre alla stessa tariffa: <strong>40&nbsp;€ per seduta da 45 minuti</strong>.</p>
+  <div class="zone-colonne">
+    <div>
+      <h3>Provincia di Varese</h3>
+      <ul>
+        <li>Varese</li>
+        <li>Gallarate</li>
+        <li>Busto Arsizio</li>
+        <li>Saronno</li>
+        <li>Tradate</li>
+        <li>Malnate</li>
+        <li>Arcisate</li>
+        <li>Induno Olona</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Canton Ticino (a sud di Lugano)</h3>
+      <ul>
+        <li>Mendrisio</li>
+        <li>Chiasso</li>
+        <li>Balerna</li>
+        <li>Stabio</li>
+        <li>Vacallo</li>
+        <li>Morbio Inferiore</li>
+        <li>Riva San Vitale</li>
+      </ul>
+    </div>
+  </div>
+  <p class="muted small zone-nota">Abiti in un comune vicino non elencato qui? Contatta Roberta su WhatsApp: se è raggiungibile, la seduta si organizza lo stesso.</p>
+</section>
+
 <section class="faq" aria-label="Domande frequenti">
   <h2>Domande frequenti</h2>
   <details class="faq-item">
-    <summary>Quanto costa una seduta?</summary>
-    <p>40 € per seduta da 45 minuti, per ogni trattamento. Il pagamento avviene di persona a fine trattamento.</p>
+    <summary>Quanto costa una seduta e quanto dura?</summary>
+    <p>40 € per seduta da 45 minuti, uguale per ogni trattamento. Il pagamento avviene di persona a fine trattamento.</p>
   </details>
   <details class="faq-item">
-    <summary>Dove avvengono le visite?</summary>
-    <p>Solo a domicilio, in provincia di Varese e in Canton Ticino (a sud di Lugano). L'indirizzo è sempre richiesto al momento della prenotazione.</p>
+    <summary>Quali zone raggiungete?</summary>
+    <p>La provincia di Varese e il Canton Ticino nelle zone a sud di Lugano. Se non sei sicuro che la tua zona sia coperta, scrivilo pure in chat WhatsApp prima di prenotare.</p>
   </details>
   <details class="faq-item">
-    <summary>Come avviene la conferma della prenotazione?</summary>
-    <p>Dopo aver compilato il modulo si apre WhatsApp con il messaggio già pronto: tocca Invia per confermare la prenotazione. La fascia oraria scelta è solo una preferenza: giorno e orario definitivi si concordano in chat.</p>
+    <summary>Le visite avvengono solo a domicilio?</summary>
+    <p>Sì: non c'è uno studio. Roberta si sposta da te con tutto il necessario, per questo l'indirizzo è sempre richiesto al momento della prenotazione.</p>
   </details>
   <details class="faq-item">
-    <summary>Come si paga?</summary>
-    <p>Di persona, a fine trattamento.</p>
+    <summary>Come si prenota, passo passo?</summary>
+    <p>Scegli il trattamento e compila il modulo con i tuoi dati e l'indirizzo, poi tocca il pulsante: si apre WhatsApp con il messaggio già pronto da inviare. La fascia oraria che scegli è solo una preferenza: giorno e orario definitivi si concordano in chat.</p>
   </details>
+  <details class="faq-item">
+    <summary>Cosa devo preparare per la prima visita?</summary>
+    <p>Niente di speciale: Roberta porta il lettino. Ti basta uno spazio tranquillo di circa 2×1 metri, una sedia e abbigliamento comodo. Se hai referti o esami recenti, tienili a portata di mano.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Come si svolge la prima seduta?</summary>
+    <p>Si inizia con una valutazione: Roberta ascolta il tuo problema, osserva come ti muovi e propone il piano di lavoro. Prima di iniziare, tutto viene spiegato e concordato con te.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Come si paga? Si accettano contanti?</summary>
+    <p>Il pagamento avviene di persona, a fine trattamento, in contanti.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Serve la prescrizione del medico?</summary>
+    <p>No, non è obbligatoria. Per situazioni cliniche (per esempio dopo un intervento o se stai seguendo altre terapie) è consigliata: aiuta a impostare meglio il percorso.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Lavorate anche con anziani o persone con mobilità ridotta?</summary>
+    <p>Sì, è proprio il punto forte del domicilio: la seduta avviene a casa tua, senza spostamenti. Basta avere uno spazio libero dove sistemare il lettino.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Posso cancellare o spostare un appuntamento?</summary>
+    <p>Sì: basta scrivere in chat WhatsApp il prima possibile e la seduta viene spostata senza problemi.</p>
+  </details>
+  <details class="faq-item">
+    <summary>In che lingua avvengono le visite?</summary>
+    <p>In italiano.</p>
+  </details>
+</section>
+
+<section class="recensioni" aria-label="Recensioni dei pazienti">
+  <h2>Cosa dicono i pazienti</h2>
+  <p class="recensioni-sottotitolo">Le prime recensioni arriveranno presto — vuoi essere tra i primi a lasciare la tua?</p>
+  <div id="recensioni-lista"></div>
+  <a class="recensioni-cta" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20lasciare%20una%20recensione%20sulla%20mia%20seduta%20di%20fisioterapia%3A" target="_blank" rel="noopener">Lascia la tua recensione</a>
 </section>
 
 <footer class="foot">
@@ -120,19 +253,35 @@
 </footer>
 
 <!-- Barra prenotazione sticky -->
-<button id="cartbar" hidden>
+<button id="cartbar" hidden aria-label="Apri il riepilogo della prenotazione">
   <span id="cartbar-testo"></span>
   <span class="cartbar-cta">Prenota →</span>
 </button>
 
 <!-- Pannello riepilogo + form prenotazione -->
 <div id="drawer-sfondo" hidden></div>
-<section id="drawer" hidden aria-label="Riepilogo e dati prenotazione">
+<section id="drawer" hidden role="dialog" aria-modal="true" aria-label="Riepilogo e dati prenotazione" tabindex="-1">
   <div class="drawer-handle"></div>
   <div class="drawer-head">
     <h2>La tua prenotazione</h2>
     <button id="drawer-chiudi" aria-label="Chiudi">✕</button>
   </div>
+
+  <!-- ciclo2-ux-mobile: indicatore di progresso -->
+  <ol class="drawer-steps" id="drawer-steps" aria-label="Passi della prenotazione">
+    <li class="ds-step is-attivo" data-passo="1" aria-current="step">
+      <span class="ds-num" aria-hidden="true">1</span>
+      <span class="ds-label">Riepilogo</span>
+    </li>
+    <li class="ds-step" data-passo="2">
+      <span class="ds-num" aria-hidden="true">2</span>
+      <span class="ds-label">I tuoi dati</span>
+    </li>
+    <li class="ds-step" data-passo="3">
+      <span class="ds-num" aria-hidden="true">3</span>
+      <span class="ds-label">Conferma su WhatsApp</span>
+    </li>
+  </ol>
 
   <div id="righe"></div>
 
@@ -143,24 +292,27 @@
     <h3>I tuoi dati</h3>
 
     <label>Nome e cognome *
-      <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Mario Rossi" required>
+      <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Mario Rossi" enterkeyhint="next" aria-describedby="f-nome-err" required>
+      <p class="campo-err" id="f-nome-err" hidden></p>
     </label>
 
     <label>Telefono *
-      <input type="tel" id="f-telefono" autocomplete="tel" placeholder="Es. 345 111 4337" required>
+      <input type="tel" id="f-telefono" autocomplete="tel" inputmode="tel" enterkeyhint="next" placeholder="Es. 345 111 4337" aria-describedby="f-telefono-err" required>
+      <p class="campo-err" id="f-telefono-err" hidden></p>
     </label>
 
     <label id="wrap-indirizzo">Indirizzo *
-      <input type="text" id="f-indirizzo" autocomplete="street-address" placeholder="Via, numero, località">
+      <input type="text" id="f-indirizzo" autocomplete="street-address" enterkeyhint="next" placeholder="Via, numero, località" aria-describedby="f-indirizzo-err">
+      <p class="campo-err" id="f-indirizzo-err" hidden></p>
     </label>
 
     <label>Fascia oraria preferita *
-      <select id="f-orario" required></select>
+      <select id="f-orario" enterkeyhint="next" required></select>
     </label>
     <p id="orario-avviso" class="avviso" hidden></p>
 
     <label>Note (facoltative)
-      <textarea id="f-note" rows="2" maxlength="320" placeholder="Es. dolore alla spalla destra da due settimane…"></textarea>
+      <textarea id="f-note" rows="2" maxlength="320" enterkeyhint="enter" placeholder="Es. dolore alla spalla destra da due settimane…"></textarea>
     </label>
 
     <p id="form-error" class="error" hidden></p>
