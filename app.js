@@ -293,6 +293,16 @@ function renderMenu() {
 function renderOrarioSelect(slot) {
   var sel = $('f-orario');
   sel.innerHTML = '';
+  /* ux-mobile: errore inline per la fascia oraria (creato via JS, senza toccare index.html) */
+  var errEl = $('f-orario-err');
+  if (!errEl && sel.parentNode) {
+    errEl = document.createElement('p');
+    errEl.className = 'campo-err';
+    errEl.id = 'f-orario-err';
+    errEl.hidden = true;
+    sel.parentNode.insertBefore(errEl, sel.nextSibling);
+    sel.setAttribute('aria-describedby', 'f-orario-err');
+  }
   if (!slot.length) {
     var o = document.createElement('option');
     o.textContent = 'Nessuna fascia disponibile — scrivici in chat';
@@ -300,12 +310,39 @@ function renderOrarioSelect(slot) {
     sel.appendChild(o);
     return;
   }
+  /* ux-mobile: placeholder esplicito invece della prima fascia pre-selezionata,
+   * così la scelta dell'orario è sempre consapevole (bugfix: prima veniva
+   * inviata la prima fascia senza che l'utente la scegliesse davvero). */
+  var ph = document.createElement('option');
+  ph.value = '';
+  ph.disabled = true;
+  ph.selected = true;
+  ph.textContent = 'Scegli la fascia oraria…';
+  sel.appendChild(ph);
   slot.forEach(function (s) {
     var o = document.createElement('option');
     o.value = s.etichetta;
     o.textContent = s.etichetta;
     sel.appendChild(o);
   });
+}
+
+/* Errore inline dedicato alla select della fascia oraria */
+function uxSetOrarioErrore(msg) {
+  var sel = $('f-orario');
+  var e = $('f-orario-err');
+  if (!e) return;
+  if (msg) {
+    sel.classList.add('is-errore');
+    sel.setAttribute('aria-invalid', 'true');
+    e.hidden = false;
+    e.textContent = msg;
+  } else {
+    sel.classList.remove('is-errore');
+    sel.removeAttribute('aria-invalid');
+    e.hidden = true;
+    e.textContent = '';
+  }
 }
 
 /* "Prima disponibilità" — riduce l'attrito: il cliente vede subito quando
@@ -474,6 +511,14 @@ function bindUI() {
 
   $('ordine-form').addEventListener('submit', onSubmit);
 
+  // ux-mobile: l'errore sulla fascia oraria si cancella appena si sceglie un'opzione
+  $('f-orario').addEventListener('change', function () {
+    if ($('f-orario').value) {
+      uxSetOrarioErrore(null);
+      if ($('form-error').textContent.indexOf('fascia oraria') !== -1) formError(null);
+    }
+  });
+
   // ciclo2-ux-mobile: validazione live + passo 2 allo step indicator + scroll tastiera
   var form = $('ordine-form');
   Object.keys(CICLO2_CAMPI).forEach(function (id) {
@@ -577,6 +622,16 @@ function onSubmit(ev) {
   var indirizzo = $('f-indirizzo').value.trim();
   var orario = $('f-orario').value;
   var note = $('f-note').value;
+
+  /* ux-mobile: la fascia oraria va scelta davvero (placeholder vuoto di default) */
+  if (!orario) {
+    uxSetOrarioErrore('Scegli una fascia oraria preferita.');
+    formError('Scegli una fascia oraria preferita.');
+    $('f-orario').focus();
+    sbloccaBtn();
+    return;
+  }
+  uxSetOrarioErrore(null);
 
   var orderId = genOrderId();
   var message = buildMessage(tenant, righe, {
