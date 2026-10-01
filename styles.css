@@ -691,3 +691,76 @@ body {
   outline-width: 3px;
   outline-offset: 2px;
 }
+
+/* =====================================================================
+ * solidita (01/10/2026) — stili spostati dal <style> inline di index.html
+ * (stesso CSS, ora cacheabile), skip-link accessibilità, reduced-motion
+ * ===================================================================== */
+
+/* ---------- Zone servite (spostato da index.html, invariato) ---------- */
+.zone-servite {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+}
+.zone-servite > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 12px;
+}
+.zone-servite > p { font-size: 0.95rem; }
+.zone-colonne {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.zone-colonne h3 {
+  font-size: 0.95rem;
+  color: var(--primario-scuro);
+  margin: 0 0 6px;
+}
+.zone-colonne ul {
+  list-style: none;
+  margin: 0;
+  padding: 12px 14px;
+  background: #F7FAF9;
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  font-size: 0.93rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+}
+.zone-colonne ul li::before { content: "📍 "; }
+.zone-nota { margin-top: 10px; }
+@media (min-width: 520px) {
+  .zone-colonne { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Skip link (accessibilità tastiera / screen reader) ---------- */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  background: var(--primario);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus-visible { top: 12px; }
+
+/* ---------- Riduci il movimento (accessibilità) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
