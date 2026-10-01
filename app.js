@@ -187,7 +187,11 @@ function applyTenant() {
   if (tenant.colori && tenant.colori.sfondo) {
     document.documentElement.style.setProperty('--sfondo', tenant.colori.sfondo);
   }
-  document.title = 'Prenota da ' + tenant.nome;
+  /* solidita: il <title> SEO è già ottimizzato in index.html — lo si
+   * sovrascrive solo se il tenant ne definisce uno dedicato (seoTitle). */
+  if (tenant.seoTitle) {
+    document.title = tenant.seoTitle;
+  }
 
   // Banner demo se numero segnaposto
   if (isPlaceholderNumber(tenant)) {
@@ -218,6 +222,7 @@ function applyTenant() {
   renderOrarioSelect(slot);
   bindUI();
   renderCart();
+  renderRecensioni(); // solidita: agganciato al caricamento tenant (niente polling)
 }
 
 function renderMenu() {
@@ -808,15 +813,5 @@ function renderRecensioni() {
   });
 }
 
-// Avvio del rendering recensioni una volta che il tenant è stato caricato (additivo: non tocca init)
-(function () {
-  if (typeof document === 'undefined') return;
-  var tentativi = 0;
-  function avvia() {
-    if (typeof tenant !== 'undefined' && tenant) { renderRecensioni(); return; }
-    tentativi++;
-    if (tentativi < 100) setTimeout(avvia, 100);
-    else renderRecensioni(); // fallback: mostra comunque il placeholder
-  }
-  document.addEventListener('DOMContentLoaded', avvia);
-})();
+/* solidita: renderRecensioni() è ora chiamato da applyTenant() a tenant
+ * caricato — niente più polling. La funzione resta definita qui sopra. */
