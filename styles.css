@@ -636,3 +636,58 @@ body {
 
 /* ---------- Accessibilità: focus chiaro sullo step indicator ---------- */
 #drawer-steps:focus-within { outline: none; }
+
+/* =====================================================================
+ * crescita — strip tariffa in evidenza + CTA WhatsApp diretto
+ * ===================================================================== */
+
+/* ---------- Strip tariffa sotto l'hero ---------- */
+.tariffa-strip {
+  max-width: 640px;
+  margin: 10px auto 0;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  text-align: center;
+  background: #E6F4F1;
+  border: 1px solid var(--primario);
+  border-radius: var(--raggio);
+}
+.tariffa-strip strong { color: var(--primario-scuro); }
+@media (max-width: 640px) {
+  .tariffa-strip { margin-left: 16px; margin-right: 16px; }
+}
+
+/* ---------- CTA WhatsApp diretto ---------- */
+.contatto-cta {
+  max-width: 640px;
+  margin: 8px auto 0;
+  padding: 20px 16px 4px;
+  text-align: center;
+}
+.contatto-cta > h2 {
+  font-size: 1.15rem;
+  border-bottom: 2px solid var(--primario);
+  padding-bottom: 4px;
+  margin: 0 0 10px;
+}
+.contatto-cta > p {
+  font-size: 0.93rem;
+  margin: 0 0 14px;
+}
+.cta-whatsapp {
+  display: inline-block;
+  background: #25D366;
+  color: #062b16;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border-radius: 999px;
+  padding: 14px 28px;
+  min-height: 48px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+.cta-whatsapp:active { transform: scale(0.97); }
+.cta-whatsapp:focus-visible {
+  outline-width: 3px;
+  outline-offset: 2px;
+}
