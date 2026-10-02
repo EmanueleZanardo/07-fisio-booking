@@ -240,6 +240,12 @@ function renderMenu() {
       prodottiById[p.id] = p;
       var art = document.createElement('article');
       art.className = 'prodotto' + (p.disponibile === false ? ' non-disponibile' : '');
+      var ICONE_TRATTAMENTI = { riabilitazione: '🏃', dolori: '💆', posturale: '🧘', massoterapia: '🤲' };
+      var icon = document.createElement('div');
+      icon.className = 'prod-icon';
+      icon.textContent = ICONE_TRATTAMENTI[p.id] || '💚';
+      icon.setAttribute('aria-hidden', 'true');
+      art.appendChild(icon);
       var info = document.createElement('div');
       info.className = 'prodotto-info';
       var h3 = document.createElement('h3');
