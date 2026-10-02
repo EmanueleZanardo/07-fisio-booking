@@ -815,3 +815,362 @@ function renderRecensioni() {
 
 /* solidita: renderRecensioni() è ora chiamato da applyTenant() a tenant
  * caricato — niente più polling. La funzione resta definita qui sopra. */
+
+/* =====================================================================
+ * Admin incassi (Roberta) — statistiche su Supabase condiviso.
+ * Tabella fisio_incassi(id, data, trattamento, prezzo, note, created_at).
+ * Le due costanti sotto sono placeholder: vanno compilate con URL e
+ * anon key del progetto Supabase prima di usare il pannello.
+ * ===================================================================== */
+var SUPABASE_URL = '__SUPABASE_URL__';
+var SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
+var ADMIN_PIN = 'admin123';
+
+var adminChartMesi = null;
+var adminChartTratt = null;
+var adminRows = [];
+var adminTrattCache = null;
+
+function sbConfigured() {
+  return SUPABASE_URL && SUPABASE_URL.indexOf('__SUPABASE') !== 0 &&
+         SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.indexOf('__SUPABASE') !== 0;
+}
+
+/* Helper REST Supabase: header apikey + Authorization Bearer */
+function sb(path, opts) {
+  opts = opts || {};
+  var h = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json'
+  };
+  if (opts.headers) Object.keys(opts.headers).forEach(function (k) { h[k] = opts.headers[k]; });
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    method: opts.method || 'GET',
+    headers: h,
+    body: opts.body
+  });
+}
+
+function adminAvviso(msg) {
+  var e = $('admin-avviso');
+  if (!msg) { e.hidden = true; e.textContent = ''; return; }
+  e.hidden = false;
+  e.textContent = msg;
+}
+
+/* ---------- PIN ---------- */
+function adminOpenPin() {
+  try {
+    if (sessionStorage.getItem('fisio_admin') === '1') { adminShow(); return; }
+  } catch (e) { /* sessionStorage opzionale */ }
+  $('pin-panel').hidden = false;
+  $('pin-sfondo').hidden = false;
+  $('pin-err').hidden = true;
+  $('pin-input').value = '';
+  setTimeout(function () { try { $('pin-input').focus(); } catch (e) {} }, 50);
+}
+
+function adminClosePin() {
+  $('pin-panel').hidden = true;
+  $('pin-sfondo').hidden = true;
+}
+
+function onPinSubmit(ev) {
+  ev.preventDefault();
+  if ($('pin-input').value === ADMIN_PIN) {
+    try { sessionStorage.setItem('fisio_admin', '1'); } catch (e) {}
+    adminShow();
+  } else {
+    var e = $('pin-err');
+    e.hidden = false;
+    e.textContent = 'PIN errato.';
+  }
+}
+
+/* ---------- Apertura pannello ---------- */
+function adminShow() {
+  adminClosePin();
+  adminAvviso(null);
+  $('admin-panel').hidden = false;
+  $('admin-sfondo').hidden = false;
+  document.body.style.overflow = 'hidden';
+  var d = $('a-data');
+  if (!d.value) d.value = new Date().toISOString().slice(0, 10); // default: oggi
+  adminFillTrattamenti();
+  if (!sbConfigured()) {
+    adminAvviso('Database non collegato: le statistiche sono disattivate finché non vengono inserite le chiavi Supabase.');
+    adminRenderRighe([]);
+    return;
+  }
+  /* Chart.js caricato lazily dal CDN solo quando si apre l'admin */
+  loadChartJs()
+    .catch(function () {
+      adminAvviso('Grafici non caricati (CDN non raggiungibile): tabella e KPI restano disponibili.');
+    })
+    .then(function () { adminReload(); });
+}
+
+function adminClose() {
+  $('admin-panel').hidden = true;
+  $('admin-sfondo').hidden = true;
+  document.body.style.overflow = '';
+}
+
+var chartJsPromise = null;
+function loadChartJs() {
+  if (typeof window !== 'undefined' && window.Chart) return Promise.resolve();
+  if (!chartJsPromise) {
+    chartJsPromise = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+      s.onload = function () { resolve(); };
+      s.onerror = function () { reject(new Error('Chart.js non caricato')); };
+      document.head.appendChild(s);
+    });
+  }
+  return chartJsPromise;
+}
+
+/* ---------- Form: trattamenti dal tenant ---------- */
+function adminFillTrattamenti() {
+  var sel = $('a-trattamento');
+  if (sel.options.length && adminTrattCache) return;
+  sel.innerHTML = '';
+  var prods = (typeof tenant !== 'undefined' && tenant && tenant.prodotti) ? tenant.prodotti : [];
+  adminTrattCache = {};
+  prods.filter(function (p) { return p.disponibile !== false; }).forEach(function (p) {
+    adminTrattCache[p.nome] = p.prezzo;
+    var o = document.createElement('option');
+    o.value = p.nome;
+    o.textContent = p.nome + ' — ' + fmtEUR(p.prezzo);
+    sel.appendChild(o);
+  });
+  if (!sel.options.length) {
+    var o = document.createElement('option');
+    o.value = '';
+    o.disabled = true;
+    o.textContent = 'Nessun trattamento disponibile';
+    sel.appendChild(o);
+  }
+  adminSyncPrezzo();
+}
+
+function adminSyncPrezzo() {
+  var sel = $('a-trattamento');
+  var p = adminTrattCache && adminTrattCache[sel.value];
+  if (p !== undefined && p !== null) $('a-prezzo').value = Number(p).toFixed(2);
+}
+
+/* ---------- Lettura righe ---------- */
+function adminReload() {
+  adminAvviso(null);
+  sb('fisio_incassi?select=id,data,trattamento,prezzo,note&order=data.desc,created_at.desc')
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function (rows) {
+      adminRows = rows || [];
+      adminRenderRighe(adminRows);
+      adminRenderKpi(adminRows);
+      adminRenderCharts(adminRows);
+    })
+    .catch(function (err) {
+      adminAvviso('Impossibile caricare gli incassi: ' + err.message);
+    });
+}
+
+/* ---------- Tabella righe ---------- */
+function adminRenderRighe(rows) {
+  var box = $('admin-righe');
+  box.innerHTML = '';
+  if (!rows.length) {
+    box.innerHTML = '<p class="muted">Nessuna seduta registrata.</p>';
+    return;
+  }
+  var wrap = document.createElement('div');
+  wrap.className = 'admin-tab-wrap';
+  var t = document.createElement('table');
+  t.className = 'admin-tab';
+  var thead = document.createElement('thead');
+  thead.innerHTML = '<tr><th>Data</th><th>Trattamento</th><th>Prezzo</th><th>Note</th><th></th></tr>';
+  t.appendChild(thead);
+  var tb = document.createElement('tbody');
+  rows.forEach(function (r) {
+    var tr = document.createElement('tr');
+    var d = new Date(String(r.data) + 'T12:00:00');
+    var dataTxt = isNaN(d.getTime()) ? String(r.data) : d.toLocaleDateString('it-IT');
+    var td1 = document.createElement('td'); td1.textContent = dataTxt;
+    var td2 = document.createElement('td'); td2.textContent = r.trattamento;
+    var td3 = document.createElement('td'); td3.className = 'num'; td3.textContent = fmtEUR(r.prezzo);
+    var td4 = document.createElement('td'); td4.textContent = r.note || '';
+    var td5 = document.createElement('td');
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'admin-del'; b.textContent = '🗑';
+    b.setAttribute('aria-label', 'Elimina riga ' + dataTxt + ' ' + r.trattamento);
+    (function (id) {
+      b.addEventListener('click', function () { adminDel(id); });
+    })(r.id);
+    td5.appendChild(b);
+    [td1, td2, td3, td4, td5].forEach(function (td) { tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  wrap.appendChild(t);
+  box.appendChild(wrap);
+}
+
+function adminDel(id) {
+  if (!confirm('Eliminare questa riga?')) return;
+  adminAvviso(null);
+  sb('fisio_incassi?id=eq.' + encodeURIComponent(id), { method: 'DELETE' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      adminReload();
+    })
+    .catch(function (err) {
+      adminAvviso('Eliminazione non riuscita: ' + err.message);
+    });
+}
+
+/* ---------- Aggiungi riga ---------- */
+function onAdminAdd(ev) {
+  ev.preventDefault();
+  adminAvviso(null);
+  var data = $('a-data').value;
+  var trattamento = $('a-trattamento').value;
+  var prezzo = parseFloat(String($('a-prezzo').value).replace(',', '.'));
+  var note = $('a-note').value.trim();
+  if (!data) { adminAvviso('Scegli la data della seduta.'); return; }
+  if (!trattamento) { adminAvviso('Scegli il trattamento.'); return; }
+  if (isNaN(prezzo) || prezzo < 0) { adminAvviso('Prezzo non valido.'); return; }
+  var btn = $('admin-aggiungi');
+  btn.disabled = true;
+  function fatto() { btn.disabled = false; }
+  sb('fisio_incassi', {
+    method: 'POST',
+    headers: { 'Prefer': 'return=representation' },
+    body: JSON.stringify({ data: data, trattamento: trattamento, prezzo: prezzo, note: note })
+  })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function () {
+      $('a-note').value = '';
+      adminReload();
+      fatto();
+    }, function (err) {
+      adminAvviso('Salvataggio non riuscito: ' + err.message);
+      fatto();
+    });
+}
+
+/* ---------- KPI ---------- */
+function adminRenderKpi(rows) {
+  var tot = rows.reduce(function (s, r) { return s + Number(r.prezzo || 0); }, 0);
+  var n = rows.length;
+  $('kpi-totale').textContent = fmtEUR(tot);
+  $('kpi-n').textContent = String(n);
+  $('kpi-media').textContent = n ? fmtEUR(tot / n) : '—';
+  var perT = {};
+  rows.forEach(function (r) { perT[r.trattamento] = (perT[r.trattamento] || 0) + Number(r.prezzo || 0); });
+  var top = null, topV = 0;
+  Object.keys(perT).forEach(function (k) { if (perT[k] > topV) { topV = perT[k]; top = k; } });
+  $('kpi-top').textContent = top ? (top + ' (' + fmtEUR(topV) + ')') : '—';
+}
+
+/* ---------- Grafici ---------- */
+var MESI_IT = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+var CHART_COLORS = ['#0E7C6B', '#25D366', '#0A5F52', '#2AA198', '#66BB6A', '#81C784', '#26A69A', '#00897B', '#A5D6A7', '#C8E6C9'];
+
+function adminRenderCharts(rows) {
+  if (typeof Chart === 'undefined') return;
+  /* Bar: incassi per mese, ultimi 12 mesi */
+  var now = new Date();
+  var mesi = [];
+  for (var i = 11; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    mesi.push({
+      key: d.getFullYear() + '-' + (d.getMonth() + 1),
+      label: MESI_IT[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2),
+      tot: 0
+    });
+  }
+  var idx = {};
+  mesi.forEach(function (x, j) { idx[x.key] = j; });
+  rows.forEach(function (r) {
+    if (!r.data) return;
+    var p = String(r.data).split('-');
+    if (p.length < 2) return;
+    var k = parseInt(p[0], 10) + '-' + parseInt(p[1], 10);
+    if (idx[k] !== undefined) mesi[idx[k]].tot += Number(r.prezzo || 0);
+  });
+  if (adminChartMesi) adminChartMesi.destroy();
+  adminChartMesi = new Chart(document.getElementById('chart-mesi'), {
+    type: 'bar',
+    data: {
+      labels: mesi.map(function (x) { return x.label; }),
+      datasets: [{
+        label: 'Incassi (€)',
+        data: mesi.map(function (x) { return Math.round(x.tot * 100) / 100; }),
+        backgroundColor: '#0E7C6B'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Incassi per mese (ultimi 12 mesi)' }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+  /* Doughnut: incassi per trattamento */
+  var perT = {};
+  rows.forEach(function (r) { perT[r.trattamento] = (perT[r.trattamento] || 0) + Number(r.prezzo || 0); });
+  var labels = [], vals = [];
+  Object.keys(perT).forEach(function (k) {
+    labels.push(k);
+    vals.push(Math.round(perT[k] * 100) / 100);
+  });
+  if (adminChartTratt) adminChartTratt.destroy();
+  adminChartTratt = null;
+  if (labels.length) {
+    adminChartTratt = new Chart(document.getElementById('chart-trattamenti'), {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{ data: vals, backgroundColor: CHART_COLORS.slice(0, labels.length) }]
+      },
+      options: {
+        responsive: true,
+        plugins: { title: { display: true, text: 'Incassi per trattamento' } }
+      }
+    });
+  }
+}
+
+/* ---------- Bind ---------- */
+function adminBind() {
+  var link = $('admin-link');
+  if (link) link.addEventListener('click', adminOpenPin);
+  $('pin-sfondo').addEventListener('click', adminClosePin);
+  $('pin-annulla').addEventListener('click', adminClosePin);
+  $('pin-form').addEventListener('submit', onPinSubmit);
+  $('admin-chiudi').addEventListener('click', adminClose);
+  $('admin-sfondo').addEventListener('click', adminClose);
+  $('admin-form').addEventListener('submit', onAdminAdd);
+  $('a-trattamento').addEventListener('change', adminSyncPrezzo);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' || ev.key === 'Esc') {
+      if (!$('admin-panel').hidden) adminClose();
+      else if (!$('pin-panel').hidden) adminClosePin();
+    }
+  });
+}
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', adminBind);
+}
