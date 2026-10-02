@@ -1,6 +1,11 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 01/10/2026 ~20:25 CEST**
+**Ultimo aggiornamento: 02/10/2026 ~02:00 CEST**
+
+## 02/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- Blitz 01/10 ~20:25 CEST: security headers via vercel.json, head SEO, JSON-LD FAQPage specchio delle 12 FAQ, skip-link + role=alert + prefers-reduced-motion, bugfix app.js (title SEO non più sovrascritto) — integrato con le modifiche del worker B senza sovrascritture. Test verdi.
+- Agente crescita 01/10 ~19:35: strip tariffa 40 €/45 min in evidenza, CTA WhatsApp diretto, nuova FAQ "prenotare per un familiare" — nessun claim inventato.
+- Sito live https://fisio-roberta.vercel.app/ (completato 26/09). Monitor lead WhatsApp resta disattivato (ordine 29/09).
 
 ## Stato
 - Sito di prenotazione visite fisioterapiche, live su https://fisio-roberta.vercel.app/.
