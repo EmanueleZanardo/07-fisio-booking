@@ -336,6 +336,7 @@
   <p class="muted small">Tariffa: 40 € per seduta da 45 minuti, per ogni trattamento.</p>
   <p class="muted small">💶 Pagamento di persona a fine trattamento.</p>
   <p class="muted small">La fascia oraria scelta è una preferenza: giorni e orari definitivi si concordano in chat WhatsApp. La conferma arriva in chat.</p>
+  <p class="foot-admin"><button id="admin-link" type="button" class="admin-link">Admin</button></p>
 </footer>
 
 <!-- Barra prenotazione sticky -->
@@ -405,6 +406,69 @@
 
     <button type="submit" id="btn-ordina" class="cta">📲 Prenota via WhatsApp</button>
     <p class="muted small hint">Si aprirà WhatsApp (o WhatsApp Web) con il messaggio già pronto: tocca <strong>Invia</strong> per confermare la prenotazione.</p>
+  </form>
+</section>
+
+<!-- Pannello Admin incassi (nascosto ai clienti, accesso via PIN) -->
+<div id="admin-sfondo" hidden></div>
+<section id="admin-panel" hidden role="dialog" aria-modal="true" aria-label="Amministrazione incassi">
+  <div class="admin-head">
+    <h2>📊 Admin — Incassi</h2>
+    <button id="admin-chiudi" type="button" aria-label="Chiudi pannello admin">✕</button>
+  </div>
+  <div id="admin-avviso" class="avviso" hidden></div>
+  <div id="admin-body">
+    <section class="admin-blocco" aria-label="Registra seduta">
+      <h3>Registra seduta</h3>
+      <form id="admin-form" novalidate>
+        <div class="admin-griglia">
+          <label>Data
+            <input type="date" id="a-data" required>
+          </label>
+          <label>Trattamento
+            <select id="a-trattamento"></select>
+          </label>
+          <label>Prezzo (€)
+            <input type="number" id="a-prezzo" min="0" step="0.01" required>
+          </label>
+          <label>Note
+            <input type="text" id="a-note" maxlength="200" placeholder="Facoltative">
+          </label>
+        </div>
+        <button type="submit" id="admin-aggiungi" class="btn-admin">➕ Aggiungi</button>
+      </form>
+    </section>
+    <section class="admin-blocco" aria-label="Statistiche">
+      <h3>Statistiche</h3>
+      <div class="admin-kpi">
+        <div class="kpi"><span class="kpi-label">Incasso totale</span><span class="kpi-val" id="kpi-totale">—</span></div>
+        <div class="kpi"><span class="kpi-label">N. sedute</span><span class="kpi-val" id="kpi-n">—</span></div>
+        <div class="kpi"><span class="kpi-label">Media / seduta</span><span class="kpi-val" id="kpi-media">—</span></div>
+        <div class="kpi"><span class="kpi-label">Trattamento top</span><span class="kpi-val" id="kpi-top">—</span></div>
+      </div>
+      <div class="admin-chart"><canvas id="chart-mesi" height="240"></canvas></div>
+      <div class="admin-chart"><canvas id="chart-trattamenti" height="240"></canvas></div>
+    </section>
+    <section class="admin-blocco" aria-label="Righe incassi">
+      <h3>Righe incassi</h3>
+      <div id="admin-righe"><p class="muted">Caricamento…</p></div>
+    </section>
+  </div>
+</section>
+
+<!-- Modal PIN admin -->
+<div id="pin-sfondo" hidden></div>
+<section id="pin-panel" hidden role="dialog" aria-modal="true" aria-label="Accesso amministratore">
+  <h2>Accesso admin</h2>
+  <form id="pin-form">
+    <label>PIN
+      <input type="password" id="pin-input" autocomplete="off" inputmode="numeric">
+    </label>
+    <p id="pin-err" class="error" hidden></p>
+    <div class="pin-btns">
+      <button type="submit" class="btn-admin">Accedi</button>
+      <button type="button" id="pin-annulla">Annulla</button>
+    </div>
   </form>
 </section>
 
