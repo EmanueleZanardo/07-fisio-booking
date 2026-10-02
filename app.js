@@ -822,8 +822,8 @@ function renderRecensioni() {
  * Le due costanti sotto sono placeholder: vanno compilate con URL e
  * anon key del progetto Supabase prima di usare il pannello.
  * ===================================================================== */
-var SUPABASE_URL = '__SUPABASE_URL__';
-var SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
+var SUPABASE_URL = 'https://poyodlfqxoprmictvmaj.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBveW9kbGZxeG9wcm1pY3R2bWFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NzM2ODEsImV4cCI6MjEwNjU0OTY4MX0.pcOHsGfrQwEQ3XwldYOoqviw_BMg55aPsJ4R6lF_Ks0';
 var ADMIN_PIN = 'admin123';
 
 var adminChartMesi = null;
