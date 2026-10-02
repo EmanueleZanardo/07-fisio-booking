@@ -181,6 +181,9 @@
 }
 </script>
 <link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Vercel Web Analytics (senza cookie): abilitarlo nel dashboard del progetto Vercel -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -197,27 +200,43 @@
   Nessuna prenotazione reale viene inviata.
 </div>
 
-<header class="tenant-head">
-  <h1 id="t-nome">Caricamento…</h1>
-  <p id="t-desc" class="muted"></p>
-  <p id="t-zone" class="zone"></p>
-  <p id="t-orari" class="orari"></p>
-  <p id="t-stato" class="stato"></p>
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow eyebrow-light">Fisioterapia a domicilio</p>
+    <h1 id="t-nome">Caricamento…</h1>
+    <p id="t-desc" class="hero-sub"></p>
+    <ul class="hero-chips" aria-label="Punti di forza">
+      <li>🏠 Solo domicilio</li>
+      <li><strong>40&nbsp;€</strong> · 45 min</li>
+      <li>🤍 Ideale per anziani</li>
+    </ul>
+    <div class="hero-cta">
+      <a class="btn-wapp" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20prenotare%20una%20seduta%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 Prenota su WhatsApp</a>
+      <a class="btn-ghost" href="#trattamenti">Vedi i trattamenti</a>
+    </div>
+    <p id="t-zone" class="hero-zone"></p>
+    <p id="t-orari" class="hero-orari"></p>
+    <p id="t-stato" class="stato"></p>
+  </div>
+  <figure class="hero-media">
+    <img src="hero.jpg" alt="Fisioterapista durante una seduta a domicilio con una paziente anziana" fetchpriority="high">
+  </figure>
 </header>
-
-<p class="anziani-badge">🤍 Servizio dedicato alle persone anziane</p>
-
-<p class="tariffa-strip"><strong>40&nbsp;€</strong> per seduta da <strong>45&nbsp;minuti</strong> — uguale per ogni trattamento · 🏠 Solo domicilio · 💶 Pagamento di persona a fine trattamento</p>
 
 <div id="load-error" class="error-box" role="alert" hidden></div>
 
+<section class="trattamenti-sezione" id="trattamenti" aria-label="Trattamenti">
+<p class="eyebrow">I trattamenti</p>
+<h2 class="sezione-titolo">Scegli il tuo percorso di cura</h2>
 <p class="muted small hint-trattamenti">Scegli un trattamento: si prenota un solo trattamento alla volta.</p>
 <p id="menu-avviso" class="avviso" hidden></p>
 
 <main id="menu"></main>
+</section>
 
 <section class="come-funziona" aria-label="Come funziona">
-  <h2>Come funziona</h2>
+  <p class="eyebrow">Semplice e senza pensieri</p>
+  <h2 class="sezione-titolo">Come funziona</h2>
   <ol class="passaggi">
     <li>
       <strong>Scegli il trattamento</strong>
@@ -235,13 +254,15 @@
 </section>
 
 <section class="contatto-cta" aria-label="Contatto diretto su WhatsApp">
-  <h2>Preferisci parlare prima di prenotare?</h2>
+  <p class="eyebrow">Parliamone</p>
+  <h2 class="sezione-titolo">Preferisci parlare prima di prenotare?</h2>
   <p>Se hai un dubbio sui trattamenti, sulle zone raggiunte o sulla disponibilità, scrivici direttamente: rispondiamo in chat, senza impegno.</p>
   <a class="cta-whatsapp" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20ho%20una%20domanda%20sulle%20sedute%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 Scrivici su WhatsApp</a>
 </section>
 
 <section class="zone-servite" id="zone-servite" aria-label="Zone servite">
-  <h2>Zone servite</h2>
+  <p class="eyebrow">Dove opero</p>
+  <h2 class="sezione-titolo">Zone servite</h2>
   <p>Roberta lavora <strong>solo a domicilio</strong>, in provincia di Varese e in Canton Ticino, nelle zone a sud di Lugano. Se cerchi un <strong>fisioterapista a domicilio a Varese</strong> o una <strong>fisioterapia a domicilio nel Mendrisiotto</strong>, la seduta si svolge direttamente a casa tua: l'indirizzo viene sempre concordato al momento della prenotazione. Riabilitazione, dolori muscolari e articolari, ginnastica posturale e massoterapia, sempre alla stessa tariffa: <strong>40&nbsp;€ per seduta da 45 minuti</strong>.</p>
   <div class="zone-colonne">
     <div>
@@ -274,7 +295,8 @@
 </section>
 
 <section class="faq" aria-label="Domande frequenti">
-  <h2>Domande frequenti</h2>
+  <p class="eyebrow">Dubbi frequenti</p>
+  <h2 class="sezione-titolo">Domande frequenti</h2>
   <details class="faq-item">
     <summary>Quanto costa una seduta e quanto dura?</summary>
     <p>40 € per seduta da 45 minuti, uguale per ogni trattamento. Il pagamento avviene di persona a fine trattamento.</p>
@@ -326,7 +348,8 @@
 </section>
 
 <section class="recensioni" aria-label="Recensioni dei pazienti">
-  <h2>Cosa dicono i pazienti</h2>
+  <p class="eyebrow">Dicono di noi</p>
+  <h2 class="sezione-titolo">Cosa dicono i pazienti</h2>
   <p class="recensioni-sottotitolo">Le prime recensioni arriveranno presto — vuoi essere tra i primi a lasciare la tua?</p>
   <div id="recensioni-lista"></div>
   <a class="recensioni-cta" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20lasciare%20una%20recensione%20sulla%20mia%20seduta%20di%20fisioterapia%3A" target="_blank" rel="noopener">Lascia la tua recensione</a>
