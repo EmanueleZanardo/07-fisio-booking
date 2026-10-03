@@ -59,7 +59,7 @@
  "prodotti": [
   {
    "categoria": "trattamenti",
-   "descrizione": "Seduta da 45 minuti — recupero dopo infortuni e interventi",
+   "descrizione": "Seduta da 45 minuti a domicilio — recupero dopo infortuni e interventi, in provincia di Varese e in Ticino",
    "disponibile": true,
    "id": "riabilitazione",
    "nome": "Riabilitazione ortopedica / post-infortunio",
@@ -67,7 +67,7 @@
   },
   {
    "categoria": "trattamenti",
-   "descrizione": "Seduta da 45 minuti — schiena, collo, spalle, ginocchia…",
+   "descrizione": "Seduta da 45 minuti a domicilio — schiena, collo, spalle, ginocchia, in provincia di Varese e in Ticino",
    "disponibile": true,
    "id": "dolori",
    "nome": "Dolori muscolari e articolari",
@@ -75,7 +75,7 @@
   },
   {
    "categoria": "trattamenti",
-   "descrizione": "Seduta da 45 minuti — postura e mobilità",
+   "descrizione": "Seduta da 45 minuti a domicilio — postura e mobilità, in provincia di Varese e in Ticino",
    "disponibile": true,
    "id": "posturale",
    "nome": "Ginnastica posturale",
@@ -83,7 +83,7 @@
   },
   {
    "categoria": "trattamenti",
-   "descrizione": "Seduta da 45 minuti — decontratturante e rilassante",
+   "descrizione": "Seduta da 45 minuti a domicilio — decontratturante e rilassante, in provincia di Varese e in Ticino",
    "disponibile": true,
    "id": "massoterapia",
    "nome": "Massoterapia",
