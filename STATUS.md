@@ -1,6 +1,11 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 02/10/2026 ~02:00 CEST**
+**Ultimo aggiornamento: 03/10/2026 ~02:00 CEST**
+
+## 03/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- 02/10 23:48 UTC: **restyling grafico** pushato su main (commit 6fa759a): hero con foto, serif Fraunces, card trattamenti, palette calda (tenants/roberta-fisioterapista.json). Sito live https://fisio-roberta.vercel.app/.
+- Monitor lead WhatsApp resta disattivato (ordine 29/09). Prossimi passi: QA ordinaria; pubblicazione automatica risposte NON autorizzata.
+
 
 ## 02/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
 - Blitz 01/10 ~20:25 CEST: security headers via vercel.json, head SEO, JSON-LD FAQPage specchio delle 12 FAQ, skip-link + role=alert + prefers-reduced-motion, bugfix app.js (title SEO non più sovrascritto) — integrato con le modifiche del worker B senza sovrascritture. Test verdi.
