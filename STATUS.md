@@ -1,6 +1,12 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 03/10/2026 ~02:00 CEST**
+**Ultimo aggiornamento: 03/10/2026 ~14:45 CEST**
+
+## 03/10/2026 ~14:45 CEST — pass SEO locale (builder b2)
+- index.html: JSON-LD Physiotherapy — `areaServed` semplificato al testo zone reale ("Provincia di Varese e Canton Ticino (zone a sud di Lugano)"), niente liste di comuni; `name`, `url`, `telephone`, `priceRange`, `openingHoursSpecification` (lun–ven 09–19, sab 09–13, come da orari tenant) confermati. Meta invariati (title/description già buoni, canonical + theme-color già presenti).
+- hero.jpg: aggiunti width/height (1920×1280) anti-CLS, alt già presente; preconnect font già in head; script vercel insights già defer; app.js resta in fondo al body (nessuna modifica alla logica).
+- tenants/roberta-fisioterapista.json: descrizioni 4 trattamenti arricchite con parole chiave naturali ("a domicilio … in provincia di Varese e in Ticino").
+- sitemap.xml: lastmod → 2026-10-03. Form prenotazioni e pannello admin non toccati.
 
 ## 03/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
 - 02/10 23:48 UTC: **restyling grafico** pushato su main (commit 6fa759a): hero con foto, serif Fraunces, card trattamenti, palette calda (tenants/roberta-fisioterapista.json). Sito live https://fisio-roberta.vercel.app/.
