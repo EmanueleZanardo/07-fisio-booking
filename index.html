@@ -135,7 +135,7 @@
     {
       "@type": "Question",
       "name": "Come si prenota, passo passo?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Scegli il trattamento e compila il modulo con i tuoi dati e l'indirizzo, poi tocca il pulsante: si apre WhatsApp con il messaggio già pronto da inviare. La fascia oraria che scegli è solo una preferenza: giorno e orario definitivi si concordano in chat." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Scegli il trattamento e compila il modulo con i tuoi dati e l'indirizzo, poi tocca il pulsante: si apre WhatsApp con il messaggio già pronto da inviare. Scegli il giorno e l'orario tra quelli disponibili: lo slot viene riservato subito, la conferma definitiva arriva in chat." }
     },
     {
       "@type": "Question",
@@ -311,7 +311,7 @@
   </details>
   <details class="faq-item">
     <summary>Come si prenota, passo passo?</summary>
-    <p>Scegli il trattamento e compila il modulo con i tuoi dati e l'indirizzo, poi tocca il pulsante: si apre WhatsApp con il messaggio già pronto da inviare. La fascia oraria che scegli è solo una preferenza: giorno e orario definitivi si concordano in chat.</p>
+    <p>Scegli il trattamento e compila il modulo con i tuoi dati e l'indirizzo, poi tocca il pulsante: si apre WhatsApp con il messaggio già pronto da inviare. Scegli il giorno e l'orario tra quelli disponibili: lo slot viene riservato subito, la conferma definitiva arriva in chat.</p>
   </details>
   <details class="faq-item">
     <summary>Cosa devo preparare per la prima visita?</summary>
@@ -358,7 +358,7 @@
 <footer class="foot">
   <p class="muted small">Tariffa: 40 € per seduta da 45 minuti, per ogni trattamento.</p>
   <p class="muted small">💶 Pagamento di persona a fine trattamento.</p>
-  <p class="muted small">La fascia oraria scelta è una preferenza: giorni e orari definitivi si concordano in chat WhatsApp. La conferma arriva in chat.</p>
+  <p class="muted small">Giorno e orario reali: lo slot scelto viene riservato subito. La conferma definitiva arriva in chat WhatsApp.</p>
   <p class="foot-admin"><button id="admin-link" type="button" class="admin-link">Admin</button></p>
 </footer>
 
@@ -416,9 +416,22 @@
       <p class="campo-err" id="f-indirizzo-err" hidden></p>
     </label>
 
+    <div id="slot-picker" hidden>
+      <label>Giorno *
+        <div id="day-strip" class="day-strip" role="listbox" aria-label="Scegli il giorno"></div>
+      </label>
+      <p id="slot-avviso" class="avviso" hidden></p>
+      <label>Orario *
+        <div id="slot-chips" class="slot-chips" role="listbox" aria-label="Scegli l'orario"></div>
+      </label>
+      <p class="campo-err" id="f-slot-err" hidden></p>
+    </div>
+
+    <div id="fascia-fallback">
     <label>Fascia oraria preferita *
       <select id="f-orario" enterkeyhint="next" required></select>
     </label>
+    </div>
     <p id="orario-avviso" class="avviso" hidden></p>
 
     <label>Note (facoltative)
@@ -441,6 +454,39 @@
   </div>
   <div id="admin-avviso" class="avviso" hidden></div>
   <div id="admin-body">
+    <section class="admin-blocco" aria-label="Disponibilità">
+      <h3>Disponibilità</h3>
+      <form id="disp-form" novalidate>
+        <div class="admin-griglia">
+          <label>Data
+            <input type="date" id="d-data" required>
+          </label>
+          <label>Dalle
+            <input type="time" id="d-inizio" required>
+          </label>
+          <label>Alle
+            <input type="time" id="d-fine" required>
+          </label>
+        </div>
+        <button type="submit" class="btn-admin">➕ Aggiungi slot</button>
+      </form>
+      <div class="admin-griglia" style="margin-top:10px">
+        <label>Genera da orari standard — dal
+          <input type="date" id="d-gen-da">
+        </label>
+        <label>al
+          <input type="date" id="d-gen-a">
+        </label>
+      </div>
+      <button type="button" id="d-genera" class="btn-admin">🗓️ Genera slot (45 min)</button>
+      <p class="muted small">Genera gli slot liberi dagli orari standard del sito, saltando i giorni chiusi.</p>
+      <label>Mostra giorno
+        <input type="date" id="d-vista">
+      </label>
+      <div id="disp-lista"><p class="muted">Scegli un giorno.</p></div>
+      <h4 style="margin-top:14px">Prenotazioni ricevute</h4>
+      <div id="disp-prenotazioni"><p class="muted">Caricamento…</p></div>
+    </section>
     <section class="admin-blocco" aria-label="Registra seduta">
       <h3>Registra seduta</h3>
       <form id="admin-form" novalidate>
