@@ -122,7 +122,7 @@ function buildMessage(tenant, righe, form) {
   L.push('Telefono: ' + form.telefono);
   L.push('Trattamento a domicilio');
   L.push('Indirizzo: ' + form.indirizzo);
-  L.push('Fascia oraria preferita: ' + form.orario);
+  L.push('Giorno e orario: ' + form.orario);
   L.push('Pagamento: di persona a fine trattamento');
   var note = truncateNote(form.note);
   if (note) L.push('Note: ' + note);
@@ -631,8 +631,25 @@ function onSubmit(ev) {
   var nome = $('f-nome').value.trim();
   var telefono = $('f-telefono').value.trim();
   var indirizzo = $('f-indirizzo').value.trim();
-  var orario = $('f-orario').value;
   var note = $('f-note').value;
+
+  if (dispOnline) {
+    /* Prenotazione con slot reale: giorno+orario scelti, verifica e occupa */
+    if (!dispSlotSel) {
+      dispSlotErrore('Scegli il giorno e l\u2019orario.');
+      formError('Scegli il giorno e l\u2019orario.');
+      sbloccaBtn();
+      return;
+    }
+    dispSlotErrore(null);
+    dispPrenotaSlot({
+      nome: nome, telefono: telefono, indirizzo: indirizzo,
+      note: note, righe: righe, sbloccaBtn: sbloccaBtn
+    });
+    return;
+  }
+
+  var orario = $('f-orario').value;
 
   /* ux-mobile: la fascia oraria va scelta davvero (placeholder vuoto di default) */
   if (!orario) {
@@ -644,16 +661,24 @@ function onSubmit(ev) {
   }
   uxSetOrarioErrore(null);
 
+  completaPrenotazione({
+    nome: nome, telefono: telefono, indirizzo: indirizzo,
+    orario: orario, note: note, righe: righe, sbloccaBtn: sbloccaBtn
+  });
+}
+
+/* Coda finale comune: messaggio WhatsApp + conferma (usata da entrambi i flussi) */
+function completaPrenotazione(d) {
   var orderId = genOrderId();
-  var message = buildMessage(tenant, righe, {
-    nome: nome, telefono: telefono,
-    indirizzo: indirizzo, orario: orario, note: note, orderId: orderId
+  var message = buildMessage(tenant, d.righe, {
+    nome: d.nome, telefono: d.telefono,
+    indirizzo: d.indirizzo, orario: d.orario, note: d.note, orderId: orderId
   });
   var url = buildWhatsUrl(tenant, message);
 
   if (url.length > MAX_URL_LEN) {
     formError('Prenotazione troppo lunga per WhatsApp: chiamaci al +' + tenant.whatsapp + ' per completarla.');
-    sbloccaBtn();
+    d.sbloccaBtn();
     return;
   }
 
@@ -1179,4 +1204,360 @@ function adminBind() {
 
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', adminBind);
+}
+
+/* =====================================================================
+ * Disponibilità reali (Supabase: fisio_slot / fisio_prenotazioni).
+ * Prenotazione: giorno → slot libero → form → conferma → slot occupato.
+ * Se le tabelle non esistono ancora: nessun crash, si usa la vecchia
+ * select delle fasce come preferenza (dispFallback).
+ * ===================================================================== */
+var dispOnline = false;
+var dispSlots = [];
+var dispGiornoSel = null;
+var dispSlotSel = null;
+
+function isoData(d) {
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+function parseISODate(iso) {
+  var p = iso.split('-');
+  return new Date(+p[0], +p[1] - 1, +p[2]);
+}
+function fmtDataBreve(iso) {
+  var d = parseISODate(iso);
+  return GIORNI_NOME[GIORNI[d.getDay()]].slice(0, 3) + ' ' + pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1);
+}
+function fmtDataLunga(iso) {
+  var d = parseISODate(iso);
+  return GIORNI_NOME[GIORNI[d.getDay()]] + ' ' + pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear();
+}
+function fmtOra(hms) { return String(hms).slice(0, 5); }
+
+function dispLoad() {
+  if (!sbConfigured()) { dispFallback('Database non collegato: scegli una fascia come preferenza.'); return; }
+  var oggi = isoData(new Date());
+  var fra60 = isoData(new Date(Date.now() + 60 * 864e5));
+  sb('fisio_slot?select=id,data,ora_inizio,ora_fine,stato&data=gte.' + oggi + '&data=lte.' + fra60 + '&order=data.asc,ora_inizio.asc', {})
+    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function (rows) {
+      dispOnline = true;
+      dispSlots = rows || [];
+      dispMostraPicker();
+      dispAggiornaHint();
+    })
+    .catch(function () { dispFallback('Disponibilità online non configurate: scegli una fascia come preferenza.'); });
+}
+
+function dispFallback(msg) {
+  dispOnline = false;
+  var picker = $('slot-picker'), fb = $('fascia-fallback');
+  if (picker) picker.hidden = true;
+  if (fb) fb.hidden = false;
+  var av = $('orario-avviso');
+  if (msg && av) { av.hidden = false; av.textContent = msg; }
+}
+
+function dispMostraPicker() {
+  var picker = $('slot-picker'), fb = $('fascia-fallback');
+  if (!picker || !fb) return;
+  picker.hidden = false;
+  fb.hidden = true;
+  dispGiornoSel = null;
+  dispSlotSel = null;
+  dispRenderGiorni();
+  dispRenderSlot();
+}
+
+function dispSlotLiberi() {
+  return dispSlots.filter(function (s) { return s.stato === 'libero'; });
+}
+
+function dispGiorniDisponibili() {
+  var perData = {};
+  dispSlotLiberi().forEach(function (s) { (perData[s.data] = perData[s.data] || []).push(s); });
+  var out = [], oggi = new Date(); oggi.setHours(0, 0, 0, 0);
+  for (var i = 0; i < 30; i++) {
+    var iso = isoData(new Date(oggi.getTime() + i * 864e5));
+    if (perData[iso] && perData[iso].length) out.push({ iso: iso, n: perData[iso].length });
+  }
+  return out;
+}
+
+function dispRenderGiorni() {
+  var strip = $('day-strip');
+  if (!strip) return;
+  strip.innerHTML = '';
+  var giorni = dispGiorniDisponibili();
+  var av = $('slot-avviso');
+  if (!giorni.length) {
+    if (av) { av.hidden = false; av.textContent = 'Nessuna disponibilità nei prossimi 30 giorni — scrivici in chat WhatsApp.'; }
+    return;
+  }
+  if (av) av.hidden = true;
+  giorni.forEach(function (g) {
+    var d = parseISODate(g.iso);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'day-btn' + (g.iso === dispGiornoSel ? ' sel' : '');
+    b.setAttribute('role', 'option');
+    b.setAttribute('aria-selected', g.iso === dispGiornoSel ? 'true' : 'false');
+    b.innerHTML = '<span class="day-dow">' + GIORNI_NOME[GIORNI[d.getDay()]].slice(0, 3) + '</span>' +
+                  '<span class="day-num">' + pad2(d.getDate()) + '</span>' +
+                  '<span class="day-mon">' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(2) + '</span>';
+    b.title = g.n + ' slot liberi';
+    b.addEventListener('click', function () {
+      dispGiornoSel = g.iso;
+      dispSlotSel = null;
+      dispRenderGiorni();
+      dispRenderSlot();
+      dispSlotErrore(null);
+    });
+    strip.appendChild(b);
+  });
+}
+
+function dispRenderSlot() {
+  var box = $('slot-chips');
+  if (!box) return;
+  box.innerHTML = '';
+  if (!dispGiornoSel) {
+    box.innerHTML = '<p class="muted small">Prima scegli il giorno.</p>';
+    return;
+  }
+  var slot = dispSlotLiberi().filter(function (s) { return s.data === dispGiornoSel; });
+  if (!slot.length) {
+    box.innerHTML = '<p class="muted small">Nessun orario libero questo giorno.</p>';
+    return;
+  }
+  slot.forEach(function (s) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'slot-chip' + (s.id === dispSlotSel ? ' sel' : '');
+    b.setAttribute('role', 'option');
+    b.setAttribute('aria-selected', s.id === dispSlotSel ? 'true' : 'false');
+    b.textContent = fmtOra(s.ora_inizio) + '–' + fmtOra(s.ora_fine);
+    b.addEventListener('click', function () {
+      dispSlotSel = s.id;
+      dispRenderSlot();
+      dispSlotErrore(null);
+    });
+    box.appendChild(b);
+  });
+}
+
+function dispSlotErrore(msg) {
+  var e = $('f-slot-err');
+  if (!e) return;
+  if (msg) { e.hidden = false; e.textContent = msg; }
+  else { e.hidden = true; e.textContent = ''; }
+}
+
+function dispAggiornaHint() {
+  var hint = $('slot-hint');
+  if (!hint || !dispOnline) return;
+  var liberi = dispSlotLiberi();
+  if (!liberi.length) { hint.hidden = true; return; }
+  var s = liberi[0];
+  hint.hidden = false;
+  hint.textContent = 'Prima disponibilità: ' + fmtDataBreve(s.data) + ' ore ' + fmtOra(s.ora_inizio);
+}
+
+/* Conferma con slot reale: ricontrolla che sia libero, poi occupa + registra */
+function dispPrenotaSlot(d) {
+  sb('fisio_slot?select=id,stato,data,ora_inizio,ora_fine&id=eq.' + dispSlotSel, {})
+    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function (rows) {
+      var s = (rows || [])[0];
+      if (!s || s.stato !== 'libero') throw new Error('occupato');
+      return sb('fisio_slot?id=eq.' + s.id, {
+        method: 'PATCH',
+        body: JSON.stringify({ stato: 'occupato' })
+      }).then(function (r2) {
+        if (!r2.ok) throw new Error('patch ' + r2.status);
+        return s;
+      });
+    })
+    .then(function (s) {
+      return sb('fisio_prenotazioni', {
+        method: 'POST',
+        body: JSON.stringify({
+          slot_id: s.id, nome: d.nome, telefono: d.telefono,
+          note: (d.note || '').slice(0, 320)
+        })
+      }).then(function (r3) { if (!r3.ok) throw new Error('pren ' + r3.status); return s; });
+    })
+    .then(function (s) {
+      var orarioTxt = fmtDataLunga(s.data) + ' · ' + fmtOra(s.ora_inizio) + '–' + fmtOra(s.ora_fine);
+      dispSlotSel = null;
+      dispLoad(); // ricarica disponibilità per il prossimo utente
+      completaPrenotazione({
+        nome: d.nome, telefono: d.telefono, indirizzo: d.indirizzo,
+        orario: orarioTxt, note: d.note, righe: d.righe, sbloccaBtn: d.sbloccaBtn
+      });
+    })
+    .catch(function (e) {
+      dispSlotErrore(e && e.message === 'occupato'
+        ? 'Questo orario è stato appena occupato: scegline un altro.'
+        : 'Errore di rete: riprova tra poco.');
+      formError('Non è stato possibile riservare lo slot: riprova.');
+      dispLoad();
+      d.sbloccaBtn();
+    });
+}
+
+/* =====================================================================
+ * Admin — gestione disponibilità (stesso PIN admin123, sessione esistente)
+ * ===================================================================== */
+function dispAdminErr(msg) {
+  var e = $('admin-avviso');
+  if (!msg) { e.hidden = true; e.textContent = ''; return; }
+  e.hidden = false;
+  e.textContent = msg;
+}
+
+function dispAdminDataVista() {
+  var v = $('d-vista');
+  if (v && !v.value) v.value = isoData(new Date());
+  return v ? v.value : isoData(new Date());
+}
+
+function dispAdminReload() {
+  if (!sbConfigured()) { dispAdminErr('Database non collegato.'); return; }
+  var giorno = dispAdminDataVista();
+  sb('fisio_slot?select=id,data,ora_inizio,ora_fine,stato&data=eq.' + giorno + '&order=ora_inizio.asc', {})
+    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function (rows) { dispAdminRenderLista(rows || [], giorno); })
+    .catch(function () { dispAdminErr('Impossibile caricare gli slot (tabella fisio_slot mancante? Esegui supabase-fisio-schema.sql).'); });
+  sb('fisio_prenotazioni?select=id,slot_id,nome,telefono,note,created_at&order=created_at.desc&limit=50', {})
+    .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function (rows) { dispAdminRenderPrenotazioni(rows || []); })
+    .catch(function () { /* prenotazioni opzionali */ });
+}
+
+function dispAdminRenderLista(rows, giorno) {
+  var box = $('disp-lista');
+  if (!box) return;
+  if (!rows.length) { box.innerHTML = '<p class="muted">Nessuno slot per questo giorno.</p>'; return; }
+  var html = '<div class="disp-righe">';
+  rows.forEach(function (s) {
+    var cls = s.stato === 'libero' ? 'ok' : (s.stato === 'occupato' ? 'occ' : 'blocc');
+    html += '<div class="disp-riga">' +
+      '<span class="disp-ora">' + fmtOra(s.ora_inizio) + '–' + fmtOra(s.ora_fine) + '</span>' +
+      '<span class="disp-stato ' + cls + '">' + s.stato + '</span>' +
+      '<span class="disp-azioni">' +
+      (s.stato === 'libero'
+        ? '<button type="button" data-az="blocca" data-id="' + s.id + '">Blocca</button>'
+        : (s.stato === 'bloccato'
+          ? '<button type="button" data-az="sblocca" data-id="' + s.id + '">Sblocca</button>'
+          : '<button type="button" data-az="libera" data-id="' + s.id + '">Libera</button>')) +
+      ' <button type="button" data-az="elimina" data-id="' + s.id + '">✕</button>' +
+      '</span></div>';
+  });
+  box.innerHTML = html + '</div>';
+  Array.prototype.forEach.call(box.querySelectorAll('button[data-az]'), function (b) {
+    b.addEventListener('click', function () { dispAdminAzione(b.getAttribute('data-az'), +b.getAttribute('data-id')); });
+  });
+}
+
+function dispAdminAzione(az, id) {
+  var done = function () { dispAdminReload(); dispLoad(); };
+  if (az === 'elimina') {
+    if (!confirm('Eliminare questo slot?')) return;
+    sb('fisio_slot?id=eq.' + id, { method: 'DELETE' })
+      .then(function (r) { if (!r.ok) throw new Error(); done(); })
+      .catch(function () { dispAdminErr('Eliminazione fallita.'); });
+    return;
+  }
+  var nuovo = az === 'blocca' ? 'bloccato' : 'libero';
+  sb('fisio_slot?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ stato: nuovo }) })
+    .then(function (r) { if (!r.ok) throw new Error(); done(); })
+    .catch(function () { dispAdminErr('Operazione fallita.'); });
+}
+
+function dispAdminRenderPrenotazioni(rows) {
+  var box = $('disp-prenotazioni');
+  if (!box) return;
+  if (!rows.length) { box.innerHTML = '<p class="muted">Nessuna prenotazione registrata.</p>'; return; }
+  var html = '<div class="disp-righe">';
+  rows.forEach(function (p) {
+    var quando = p.created_at ? p.created_at.slice(0, 16).replace('T', ' ') : '';
+    html += '<div class="disp-riga"><span><strong>' + escHtml(p.nome) + '</strong> · ' + escHtml(p.telefono) +
+      (p.note ? ' · <em>' + escHtml(p.note) + '</em>' : '') +
+      '</span><span class="muted small">' + quando + '</span></div>';
+  });
+  box.innerHTML = html + '</div>';
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function onDispAdd(ev) {
+  ev.preventDefault();
+  var data = $('d-data').value, ini = $('d-inizio').value, fin = $('d-fine').value;
+  if (!data || !ini || !fin) { dispAdminErr('Compila data, ora inizio e ora fine.'); return; }
+  if (ini >= fin) { dispAdminErr('L\u2019ora di fine deve essere dopo l\u2019inizio.'); return; }
+  sb('fisio_slot', { method: 'POST', body: JSON.stringify({ data: data, ora_inizio: ini, ora_fine: fin, stato: 'libero' }) })
+    .then(function (r) { if (!r.ok) throw new Error(); $('d-vista').value = data; dispAdminReload(); dispLoad(); dispAdminErr(null); })
+    .catch(function () { dispAdminErr('Inserimento fallito (tabella mancante?).'); });
+}
+
+/* Genera slot da 45 min dagli orari standard del tenant per un intervallo date */
+function onDispGenera() {
+  var da = $('d-gen-da').value, a = $('d-gen-a').value;
+  if (!da || !a || da > a) { dispAdminErr('Scegli un intervallo di date valido.'); return; }
+  var STEP = 45, nuovi = [];
+  var d0 = parseISODate(da), d1 = parseISODate(a);
+  for (var t = d0.getTime(); t <= d1.getTime(); t += 864e5) {
+    var d = new Date(t), iso = isoData(d);
+    var fasce = (tenant.orari || {})[GIORNI[d.getDay()]];
+    if (!fasce || !fasce.length) continue;
+    fasce.forEach(function (f) {
+      var start = hhmmToMin(f[0]), end = hhmmToMin(f[1]);
+      for (var m = start; m + STEP <= end; m += STEP) {
+        nuovi.push({ data: iso, ora_inizio: minToHhmm(m), ora_fine: minToHhmm(m + STEP), stato: 'libero' });
+      }
+    });
+  }
+  if (!nuovi.length) { dispAdminErr('Nessuno slot generabile in questo intervallo.'); return; }
+  if (!confirm('Creare ' + nuovi.length + ' slot liberi dal ' + da + ' al ' + a + '?')) return;
+  sb('fisio_slot', { method: 'POST', body: JSON.stringify(nuovi) })
+    .then(function (r) { if (!r.ok) throw new Error(); dispAdminReload(); dispLoad(); dispAdminErr(null); })
+    .catch(function () { dispAdminErr('Generazione fallita (tabella mancante?).'); });
+}
+
+function dispAdminBind() {
+  var f = $('disp-form');
+  if (f) f.addEventListener('submit', onDispAdd);
+  var g = $('d-genera');
+  if (g) g.addEventListener('click', onDispGenera);
+  var v = $('d-vista');
+  if (v) v.addEventListener('change', dispAdminReload);
+}
+
+/* Avvio disponibilità: dopo il tenant, e ricarica quando si apre l'admin */
+if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', function () {
+    dispAdminBind();
+    // dispLoad parte dopo initTenant: se tenant già pronto lo chiama subito
+    var attese = 0;
+    var timer = setInterval(function () {
+      attese++;
+      if ((typeof tenant !== 'undefined' && tenant) || attese > 40) {
+        clearInterval(timer);
+        dispLoad();
+      }
+    }, 250);
+    // ricarica admin ogni volta che si apre il pannello
+    var _adminShow = (typeof adminShow !== 'undefined') ? adminShow : null;
+    if (_adminShow) {
+      adminShow = function () {
+        _adminShow();
+        dispAdminReload();
+      };
+    }
+  });
 }
