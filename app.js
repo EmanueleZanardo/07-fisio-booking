@@ -1432,7 +1432,11 @@ function dispAdminReload() {
   sb('fisio_prenotazioni?select=id,slot_id,nome,telefono,note,created_at&order=created_at.desc&limit=50', {})
     .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
     .then(function (rows) { dispAdminRenderPrenotazioni(rows || []); })
-    .catch(function () { /* prenotazioni opzionali */ });
+    .catch(function () {
+      /* bugfix 03/10: mai restare bloccati su "Caricamento…" — mostra l'errore */
+      var box = $('disp-prenotazioni');
+      if (box) box.innerHTML = '<p class="muted">Impossibile caricare le prenotazioni (tabella fisio_prenotazioni mancante? Esegui supabase-fisio-schema.sql).</p>';
+    });
 }
 
 function dispAdminRenderLista(rows, giorno) {
@@ -1524,8 +1528,25 @@ function onDispGenera() {
   }
   if (!nuovi.length) { dispAdminErr('Nessuno slot generabile in questo intervallo.'); return; }
   if (!confirm('Creare ' + nuovi.length + ' slot liberi dal ' + da + ' al ' + a + '?')) return;
-  sb('fisio_slot', { method: 'POST', body: JSON.stringify(nuovi) })
-    .then(function (r) { if (!r.ok) throw new Error(); dispAdminReload(); dispLoad(); dispAdminErr(null); })
+  dispAdminErr(null);
+  /* bugfix 03/10: niente duplicati se la generazione viene ripetuta sullo
+   * stesso intervallo — si creano solo gli slot che non esistono già. */
+  sb('fisio_slot?select=data,ora_inizio&data=gte.' + da + '&data=lte.' + a, {})
+    .then(function (r) { if (!r.ok) throw new Error('read ' + r.status); return r.json(); })
+    .then(function (rows) {
+      var visti = {};
+      (rows || []).forEach(function (s) { visti[s.data + '|' + String(s.ora_inizio).slice(0, 5)] = 1; });
+      var daCreare = nuovi.filter(function (n) { return !visti[n.data + '|' + n.ora_inizio]; });
+      if (!daCreare.length) { dispAdminErr('Tutti gli slot di questo intervallo esistono già: nessun duplicato creato.'); return null; }
+      return sb('fisio_slot', { method: 'POST', body: JSON.stringify(daCreare) })
+        .then(function (r2) {
+          if (!r2.ok) throw new Error('write ' + r2.status);
+          $('d-vista').value = da;
+          dispAdminReload();
+          dispLoad();
+          dispAdminErr(null);
+        });
+    })
     .catch(function () { dispAdminErr('Generazione fallita (tabella mancante?).'); });
 }
 
