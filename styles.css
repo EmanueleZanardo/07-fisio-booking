@@ -1109,6 +1109,170 @@ img { max-width: 100%; }
 }
 .slot-chip.sel { border-color: #0E7C6B; background: #0E7C6B; color: #fff; }
 
+/* =====================================================================
+ * BUILDER 1 — UX/conversione (03/10/2026): nav sticky, trust strip,
+ * sticky bar mobile, CTA hero rafforzata, card Prenota più visibile.
+ * Solo CSS: nessuna logica del form toccata.
+ * ===================================================================== */
+
+/* ---------- Nav sticky con anchor ---------- */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(250, 247, 241, 0.96);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--bordo);
+}
+.topnav-brand {
+  font-family: var(--font-titoli);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--petrolio);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.topnav-brand span { color: var(--primario); font-weight: 600; font-size: 0.85rem; }
+.topnav-links {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.topnav-links::-webkit-scrollbar { display: none; }
+.topnav-links a {
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--primario-scuro);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 12px;
+  border-radius: 999px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.topnav-links a:active { background: var(--mmenta); }
+.topnav-wapp {
+  background: #25D366;
+  color: #062b16 !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+/* ---------- Hero: garanzia sotto la CTA ---------- */
+.hero-garanzia {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 14px;
+}
+
+/* ---------- Trust strip ---------- */
+.fiducia {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 18px 16px 0;
+}
+.fiducia-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.fiducia-lista li {
+  background: var(--card);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  box-shadow: var(--ombra-sm);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.fiducia-ico { font-size: 1.4rem; }
+.fiducia-lista li strong {
+  color: var(--petrolio);
+  font-size: 0.9rem;
+}
+@media (min-width: 760px) {
+  .fiducia { max-width: 1060px; }
+  .fiducia-lista { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- Sticky bar mobile: Prenota ora + WhatsApp ---------- */
+#sticky-cta {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: flex;
+  gap: 10px;
+  max-width: 616px;
+  margin: 0 auto;
+}
+#sticky-cta a {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(12, 59, 52, 0.38);
+}
+#sticky-cta a:active { transform: scale(0.97); }
+.scta-prenota {
+  background: var(--primario);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+.scta-wapp {
+  background: #25D366;
+  color: #062b16;
+}
+/* La sticky bar sparisce quando il carrello/drawer o un pannello sono aperti
+   (solo CSS, via :has — nessuna logica JS toccata) */
+body:has(#cartbar:not([hidden])) #sticky-cta,
+body:has(#drawer:not([hidden])) #sticky-cta,
+body:has(#conferma:not([hidden])) #sticky-cta,
+body:has(#pin-panel:not([hidden])) #sticky-cta,
+body:has(#admin-panel:not([hidden])) #sticky-cta {
+  display: none;
+}
+@media (min-width: 760px) {
+  #sticky-cta { display: none; }
+}
+
+/* ---------- Card trattamenti: pulsante Prenota più evidente ---------- */
+.prod-azioni { justify-content: stretch; }
+.btn-add {
+  flex: 1 1 auto;
+  border-radius: 14px;
+  height: 56px;
+  font-size: 1.05rem;
+}
+.btn-add::after { content: " Prenota"; }
+
+/* ---------- Anchor: non finire sotto la nav sticky ---------- */
+#inizio, #trattamenti, #come-funziona, #zone-servite, #faq {
+  scroll-margin-top: 66px;
+}
+
 /* ===== Admin disponibilità ===== */
 .disp-righe { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 .disp-riga {
