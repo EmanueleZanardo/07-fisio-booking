@@ -43,7 +43,23 @@
     "latitude": 45.8189,
     "longitude": 8.8277
   },
-  "areaServed": "Provincia di Varese e Canton Ticino (zone a sud di Lugano)",
+  "areaServed": [
+    { "@type": "City", "name": "Varese", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Gallarate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Busto Arsizio", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Saronno", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Tradate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Malnate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Arcisate", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Induno Olona", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Mendrisio", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Chiasso", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Balerna", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Stabio", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Vacallo", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Morbio Inferiore", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Riva San Vitale", "addressRegion": "TI", "addressCountry": "CH" }
+  ],
   "description": "Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona a fine trattamento.",
   "paymentAccepted": "Cash",
   "hasOfferCatalog": {
@@ -184,7 +200,19 @@
   Nessuna prenotazione reale viene inviata.
 </div>
 
-<header class="hero">
+<!-- builder1-ux: nav sticky con anchor alle sezioni principali -->
+<nav class="topnav" aria-label="Navigazione principale">
+  <a class="topnav-brand" href="#inizio">Roberta <span>· Fisioterapista</span></a>
+  <div class="topnav-links">
+    <a href="#trattamenti">Trattamenti</a>
+    <a href="#come-funziona">Come funziona</a>
+    <a href="#zone-servite">Zone</a>
+    <a href="#faq">FAQ</a>
+    <a class="topnav-wapp" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20ho%20una%20domanda%20sulle%20sedute%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 WhatsApp</a>
+  </div>
+</nav>
+
+<header class="hero" id="inizio">
   <div class="hero-inner">
     <p class="eyebrow eyebrow-light">Fisioterapia a domicilio</p>
     <h1 id="t-nome">Caricamento…</h1>
@@ -192,12 +220,14 @@
     <ul class="hero-chips" aria-label="Punti di forza">
       <li>🏠 Solo domicilio</li>
       <li><strong>40&nbsp;€</strong> · 45 min</li>
+      <li>💶 Paghi a fine seduta</li>
       <li>🤍 Ideale per anziani</li>
     </ul>
     <div class="hero-cta">
-      <a class="btn-wapp" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20prenotare%20una%20seduta%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 Prenota su WhatsApp</a>
-      <a class="btn-ghost" href="#trattamenti">Vedi i trattamenti</a>
+      <a class="btn-wapp" href="#trattamenti">📅 Prenota una seduta</a>
+      <a class="btn-ghost" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20prenotare%20una%20seduta%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 Scrivici su WhatsApp</a>
     </div>
+    <p class="hero-garanzia">✅ Nessun anticipo · Paghi 40&nbsp;€ di persona, solo a fine seduta</p>
     <p id="t-zone" class="hero-zone"></p>
     <p id="t-orari" class="hero-orari"></p>
     <p id="t-stato" class="stato"></p>
@@ -209,6 +239,16 @@
 
 <div id="load-error" class="error-box" role="alert" hidden></div>
 
+<!-- builder1-ux: trust signals veri, sopra la piega decisionale -->
+<section class="fiducia" aria-label="Garanzie">
+  <ul class="fiducia-lista">
+    <li><span class="fiducia-ico" aria-hidden="true">💶</span><strong>Nessun anticipo</strong><span>Paghi 40&nbsp;€ di persona, solo a fine seduta.</span></li>
+    <li><span class="fiducia-ico" aria-hidden="true">🏠</span><strong>Solo domicilio</strong><span>Nessuno studio da raggiungere: Roberta viene da te col lettino.</span></li>
+    <li><span class="fiducia-ico" aria-hidden="true">📍</span><strong>Zone chiare</strong><span>Provincia di Varese e Canton Ticino a sud di Lugano.</span></li>
+    <li><span class="fiducia-ico" aria-hidden="true">💬</span><strong>Tutto in chat</strong><span>Giorno e orario definitivi concordati su WhatsApp, senza impegno.</span></li>
+  </ul>
+</section>
+
 <section class="trattamenti-sezione" id="trattamenti" aria-label="Trattamenti">
 <p class="eyebrow">I trattamenti</p>
 <h2 class="sezione-titolo">Scegli il tuo percorso di cura</h2>
@@ -218,21 +258,21 @@
 <main id="menu"></main>
 </section>
 
-<section class="come-funziona" aria-label="Come funziona">
+<section class="come-funziona" id="come-funziona" aria-label="Come funziona">
   <p class="eyebrow">Semplice e senza pensieri</p>
   <h2 class="sezione-titolo">Come funziona</h2>
   <ol class="passaggi">
     <li>
-      <strong>Scegli il trattamento</strong>
-      <p>Tocca un trattamento dal menù: si prenota un solo trattamento alla volta.</p>
+      <strong>Scegli trattamento e orario</strong>
+      <p>Tocca «Prenota» sul trattamento e indica giorno e fascia oraria: si prenota un solo trattamento alla volta.</p>
     </li>
     <li>
-      <strong>Compila i tuoi dati (nome, telefono, indirizzo)</strong>
-      <p>L'indirizzo è obbligatorio: le visite sono solo a domicilio.</p>
+      <strong>Conferma via WhatsApp</strong>
+      <p>Compila i tuoi dati (nome, telefono, indirizzo): si apre WhatsApp col messaggio già pronto, tocca Invia.</p>
     </li>
     <li>
-      <strong>Conferma su WhatsApp toccando Invia</strong>
-      <p>Si apre WhatsApp con il messaggio già pronto; giorno e orario definitivi si concordano in chat.</p>
+      <strong>Seduta a domicilio</strong>
+      <p>Roberta arriva a casa tua col lettino e tutto il necessario: 45 minuti di seduta, paghi 40&nbsp;€ di persona a fine trattamento.</p>
     </li>
   </ol>
 </section>
@@ -278,7 +318,7 @@
   <p class="muted small zone-nota">Abiti in un comune vicino non elencato qui? Contatta Roberta su WhatsApp: se è raggiungibile, la seduta si organizza lo stesso.</p>
 </section>
 
-<section class="faq" aria-label="Domande frequenti">
+<section class="faq" id="faq" aria-label="Domande frequenti">
   <p class="eyebrow">Dubbi frequenti</p>
   <h2 class="sezione-titolo">Domande frequenti</h2>
   <details class="faq-item">
@@ -345,6 +385,13 @@
   <p class="muted small">Giorno e orario reali: lo slot scelto viene riservato subito. La conferma definitiva arriva in chat WhatsApp.</p>
   <p class="foot-admin"><button id="admin-link" type="button" class="admin-link">Admin</button></p>
 </footer>
+
+<!-- builder1-ux: sticky bar mobile con Prenota ora + WhatsApp (solo HTML/CSS:
+     si nasconde da sola quando il carrello/drawer/pannelli sono aperti, vedi styles.css) -->
+<div id="sticky-cta" aria-label="Azioni rapide">
+  <a class="scta-prenota" href="#trattamenti">📅 Prenota ora</a>
+  <a class="scta-wapp" href="https://wa.me/393451114337?text=Ciao%20Roberta%2C%20vorrei%20prenotare%20una%20seduta%20di%20fisioterapia%20a%20domicilio." target="_blank" rel="noopener">💬 WhatsApp</a>
+</div>
 
 <!-- Barra prenotazione sticky -->
 <button id="cartbar" hidden aria-label="Apri il riepilogo della prenotazione">
