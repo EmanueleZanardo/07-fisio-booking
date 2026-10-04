@@ -37,7 +37,7 @@ body {
   background: var(--sfondo);
   color: var(--testo);
   line-height: 1.55;
-  padding-bottom: 92px; /* spazio per la barra prenotazione sticky */
+  padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); /* spazio per la barra prenotazione sticky + notch iPhone (04/10/2026) */
   -webkit-font-smoothing: antialiased;
 }
 
@@ -401,7 +401,7 @@ img { max-width: 100%; }
 #drawer-chiudi {
   background: var(--sabbia);
   border: none;
-  width: 40px; height: 40px;
+  width: 44px; height: 44px; /* tap target mobile (04/10/2026) */
   border-radius: 50%;
   font-size: 1.1rem;
   cursor: pointer;
@@ -1106,6 +1106,7 @@ img { max-width: 100%; }
   padding: 10px 14px; border-radius: 999px;
   border: 1.5px solid #cfd8d3; background: #fff; cursor: pointer;
   font: inherit; font-weight: 600;
+  min-height: 44px; /* tap target mobile (04/10/2026) */
 }
 .slot-chip.sel { border-color: #0E7C6B; background: #0E7C6B; color: #fff; }
 
