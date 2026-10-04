@@ -1,6 +1,14 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 03/10/2026 ~14:45 CEST**
+**Ultimo aggiornamento: 04/10/2026 ~02:00 CEST**
+
+## 04/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **03/10 00:44–01:43 — pannello admin Vendite/Incassi + configurazione Supabase reale** (tabelle `fisio_incassi`, `orto_*` su progetto `warehouse-mobile` West EU; test E2E INSERT/READ/DELETE OK).
+- **03/10 01:48–01:49 — restyling completo pushato** (commit 6fa759a: hero verde petrolio, font Fraunces+Inter, card trattamenti) e verificato live su fisio-roberta.vercel.app.
+- **03/10 11:07–11:10** — prenotazione giorno+slot (30 giorni) + admin disponibilità pushati (commit 35846f2).
+- **03/10 ~12:00–13:00 — QA E2E live: 3 bug reali trovati e fixati** (slot non visibili al pubblico, slot non marcato occupato dopo prenotazione test, admin bloccata su "Caricamento..."); fix pushati `c4fd13ef`; record test eliminati, nessuna prenotazione reale toccata.
+- **03/10 ~14:55 — squadra SEO locale + UX conversione** (commit 9f970fbe, bc9c4cae — HEAD). 2 bug preesistenti confermati ma NON corretti (apertura WhatsApp bloccabile dopo round-trip async; POST fallita dopo PATCH può lasciare slot occupato senza prenotazione).
+
 
 ## 03/10/2026 ~14:45 CEST — pass SEO locale (builder b2)
 - index.html: JSON-LD Physiotherapy — `areaServed` semplificato al testo zone reale ("Provincia di Varese e Canton Ticino (zone a sud di Lugano)"), niente liste di comuni; `name`, `url`, `telephone`, `priceRange`, `openingHoursSpecification` (lun–ven 09–19, sab 09–13, come da orari tenant) confermati. Meta invariati (title/description già buoni, canonical + theme-color già presenti).
