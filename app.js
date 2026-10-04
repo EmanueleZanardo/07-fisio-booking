@@ -1363,18 +1363,26 @@ function dispAggiornaHint() {
   hint.textContent = 'Prima disponibilità: ' + fmtDataBreve(s.data) + ' ore ' + fmtOra(s.ora_inizio);
 }
 
-/* Conferma con slot reale: ricontrolla che sia libero, poi occupa + registra */
+/* Conferma con slot reale: occupazione atomica (PATCH condizionale) + rollback */
+/* squad-fisio-w2: booking atomico + rollback */
 function dispPrenotaSlot(d) {
   sb('fisio_slot?select=id,stato,data,ora_inizio,ora_fine&id=eq.' + dispSlotSel, {})
     .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
     .then(function (rows) {
       var s = (rows || [])[0];
       if (!s || s.stato !== 'libero') throw new Error('occupato');
-      return sb('fisio_slot?id=eq.' + s.id, {
+      /* squad-fisio-w2: PATCH condizionale sullo stato=libero — è il vero gate
+         atomico (la GET sopra è solo fast-path). Se l'array restituito è vuoto,
+         un altro utente ha occupato lo slot nel frattempo (race). */
+      return sb('fisio_slot?id=eq.' + s.id + '&stato=eq.libero', {
         method: 'PATCH',
+        headers: { 'Prefer': 'return=representation' },
         body: JSON.stringify({ stato: 'occupato' })
       }).then(function (r2) {
         if (!r2.ok) throw new Error('patch ' + r2.status);
+        return r2.json();
+      }).then(function (upd) {
+        if (!(upd || []).length) throw new Error('occupato');
         return s;
       });
     })
@@ -1385,7 +1393,19 @@ function dispPrenotaSlot(d) {
           slot_id: s.id, nome: d.nome, telefono: d.telefono,
           note: (d.note || '').slice(0, 320)
         })
-      }).then(function (r3) { if (!r3.ok) throw new Error('pren ' + r3.status); return s; });
+      }).then(function (r3) {
+        if (!r3.ok) {
+          /* squad-fisio-w2: POST fallita DOPO la PATCH — rollback compensativo:
+             libera lo slot. Se fallisce anche il rollback, log e errore comunque. */
+          return sb('fisio_slot?id=eq.' + s.id, {
+            method: 'PATCH',
+            body: JSON.stringify({ stato: 'libero' })
+          }).catch(function (rbErr) {
+            console.error('Rollback slot ' + s.id + ' fallito:', rbErr);
+          }).then(function () { throw new Error('pren ' + r3.status); });
+        }
+        return s;
+      });
     })
     .then(function (s) {
       var orarioTxt = fmtDataLunga(s.data) + ' · ' + fmtOra(s.ora_inizio) + '–' + fmtOra(s.ora_fine);
