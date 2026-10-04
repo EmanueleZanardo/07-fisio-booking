@@ -142,6 +142,19 @@ var prodottiById = {};
 var carrello = {};   // id -> 1 (una sola prenotazione alla volta)
 var lastWhatsUrl = null; // ultimo wa.me generato (per "Riapri WhatsApp" dalla conferma)
 
+/* squad-fisio-w1: popup sync + fallback — apre la finestra WhatsApp SUBITO,
+ * nel call stack sincrono del gesto utente, prima di qualsiasi validazione
+ * async: dopo una catena di fetch il browser bloccherebbe window.open come
+ * popup. Restituisce il riferimento alla finestra oppure null. */
+function apriWaWinSincrona() {
+  try {
+    var w = window.open('about:blank', '_blank', 'noopener');
+    return w || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 function $(id) { return document.getElementById(id); }
 
 function slugFromUrl() {
@@ -642,9 +655,13 @@ function onSubmit(ev) {
       return;
     }
     dispSlotErrore(null);
+    /* squad-fisio-w1: popup sync + fallback — la finestra si apre qui, nel
+     * gesto utente sincrono; completaPrenotazione la navigherà a url dopo
+     * la catena async (GET→PATCH→POST) senza chiamare window.open. */
     dispPrenotaSlot({
       nome: nome, telefono: telefono, indirizzo: indirizzo,
-      note: note, righe: righe, sbloccaBtn: sbloccaBtn
+      note: note, righe: righe, sbloccaBtn: sbloccaBtn,
+      waWin: apriWaWinSincrona()
     });
     return;
   }
@@ -663,7 +680,8 @@ function onSubmit(ev) {
 
   completaPrenotazione({
     nome: nome, telefono: telefono, indirizzo: indirizzo,
-    orario: orario, note: note, righe: righe, sbloccaBtn: sbloccaBtn
+    orario: orario, note: note, righe: righe, sbloccaBtn: sbloccaBtn,
+    waWin: apriWaWinSincrona() /* squad-fisio-w1: popup sync + fallback */
   });
 }
 
@@ -678,15 +696,31 @@ function completaPrenotazione(d) {
 
   if (url.length > MAX_URL_LEN) {
     formError('Prenotazione troppo lunga per WhatsApp: chiamaci al +' + tenant.whatsapp + ' per completarla.');
+    /* squad-fisio-w1: popup sync + fallback — niente tab vuota orfana */
+    if (d.waWin && !d.waWin.closed) { try { d.waWin.close(); } catch (e) { /* già chiusa */ } }
     d.sbloccaBtn();
     return;
   }
 
-  window.open(url, '_blank', 'noopener');
-  sbloccaBtn(2500); // cooldown anti-doppio-tap (ciclo2-ux-mobile)
-  lastWhatsUrl = url;
+  lastWhatsUrl = url; // resta per "Riapri WhatsApp" dalla conferma
+  /* squad-fisio-w1: popup sync + fallback — naviga la finestra aperta nel
+   * gesto utente invece di window.open (bloccato dopo catene async). Se è
+   * null/chiusa non fallire in silenzio: la conferma mostra il bottone
+   * "Riapri WhatsApp" (target _blank, rel noopener) verso url e gli diamo focus. */
+  var popupOk = false;
+  if (d.waWin && !d.waWin.closed) {
+    try { d.waWin.location.href = url; popupOk = true; }
+    catch (e) { popupOk = false; }
+  }
+  d.sbloccaBtn(2500); // cooldown anti-doppio-tap (ciclo2-ux-mobile)
   trackPrenotazione(orderId);
   showConferma(orderId);
+  if (!popupOk) {
+    var btnRiapri = $('conferma-riapri');
+    if (btnRiapri && typeof btnRiapri.focus === 'function') {
+      try { btnRiapri.focus(); } catch (e2) { /* focus opzionale */ }
+    }
+  }
 }
 
 /* =====================================================================
@@ -1413,7 +1447,8 @@ function dispPrenotaSlot(d) {
       dispLoad(); // ricarica disponibilità per il prossimo utente
       completaPrenotazione({
         nome: d.nome, telefono: d.telefono, indirizzo: d.indirizzo,
-        orario: orarioTxt, note: d.note, righe: d.righe, sbloccaBtn: d.sbloccaBtn
+        orario: orarioTxt, note: d.note, righe: d.righe, sbloccaBtn: d.sbloccaBtn,
+        waWin: d.waWin /* squad-fisio-w1: popup sync + fallback */
       });
     })
     .catch(function (e) {
@@ -1421,6 +1456,8 @@ function dispPrenotaSlot(d) {
         ? 'Questo orario è stato appena occupato: scegline un altro.'
         : 'Errore di rete: riprova tra poco.');
       formError('Non è stato possibile riservare lo slot: riprova.');
+      /* squad-fisio-w1: popup sync + fallback — niente tab vuota orfana */
+      if (d.waWin && !d.waWin.closed) { try { d.waWin.close(); } catch (e2) { /* già chiusa */ } }
       dispLoad();
       d.sbloccaBtn();
     });
