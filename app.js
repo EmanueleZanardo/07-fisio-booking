@@ -1434,7 +1434,10 @@ function dispPrenotaSlot(d) {
           return sb('fisio_slot?id=eq.' + s.id, {
             method: 'PATCH',
             body: JSON.stringify({ stato: 'libero' })
-          }).catch(function (rbErr) {
+          }).then(function (rr) {
+            /* squad-fisio-w2: rollback fallito anche solo a livello HTTP → log */
+            if (!rr.ok) console.error('Rollback slot ' + s.id + ' fallito: http ' + rr.status);
+          }, function (rbErr) {
             console.error('Rollback slot ' + s.id + ' fallito:', rbErr);
           }).then(function () { throw new Error('pren ' + r3.status); });
         }
