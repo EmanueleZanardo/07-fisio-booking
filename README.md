@@ -6,8 +6,8 @@ trattamento (una sola prenotazione alla volta), compila nome/telefono/indirizzo
 richiesta via WhatsApp con messaggio precompilato (`wa.me`). Pagamento di
 persona a fine trattamento.
 
-Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
-(template asporto), adattato alla tipologia **prenotazioni**.
+Derivato da un sistema multi-tenant di prenotazioni (template asporto),
+adattato alla tipologia **prenotazioni**.
 
 ## Dati attività
 
@@ -30,10 +30,12 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 ```
 ├── index.html                 # pagina di prenotazione
 ├── app.js                     # logica: trattamenti, riepilogo, form, messaggio wa.me
+├── reminders.js               # promemoria locali (localStorage + banner + .ics), nessun invio
 ├── styles.css                 # mobile-first (tema teal)
 ├── favicon.svg                # icona sito (croce su sfondo teal)
 ├── og-image.png               # immagine anteprima link (WhatsApp/Facebook)
 ├── robots.txt / sitemap.xml   # SEO di base
+├── zone-servite.html          # pagina SEO locale (Varese + Ticino sud Lugano)
 ├── tenant.json                # TEMPLATE per nuovi tenant
 ├── tenants/
 │   └── roberta-fisioterapista.json  # configurazione attività
@@ -42,6 +44,22 @@ Derivato dal sistema multi-tenant di `EmanueleZanardo/booking-system`
 ```
 
 Il tenant si sceglie con `?tenant=<slug>` (default: `roberta-fisioterapista`).
+
+## Funzionalità aggiunte (05/10/2026)
+
+- **FAQ** in `index.html` (12 domande) + `FAQPage` JSON-LD per i rich snippet Google.
+- **Pagina zone servite** (`zone-servite.html`): SEO locale per provincia di
+  Varese e Canton Ticino a sud di Lugano, con CTA WhatsApp.
+- **Promemoria prenotazioni** (`reminders.js`): ogni richiesta inviata viene
+  salvata nel browser; alla visita successiva un banner discreto propone
+  "Aggiungi al calendario" (file `.ics` generato al volo). Nessun dato esce
+  dal dispositivo, nessun invio automatico.
+- **SEO locale**: `LocalBusiness`/`Physiotherapy` JSON-LD, meta keywords,
+  geo-tags, `robots.txt` + `sitemap.xml` con le due pagine.
+- **Accessibilità**: skip-link, focus visibile 3px, `prefers-reduced-motion`,
+  target touch ≥44px, label/errori inline nel form.
+- **Performance**: `hero.jpg` ottimizzata (~170KB), `fetchpriority="high"`
+  sull'hero, dimensioni width/height anti-layout-shift.
 
 ## Test (26/09/2026)
 
