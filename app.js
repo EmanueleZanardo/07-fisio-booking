@@ -714,6 +714,13 @@ function completaPrenotazione(d) {
   }
   d.sbloccaBtn(2500); // cooldown anti-doppio-tap (ciclo2-ux-mobile)
   trackPrenotazione(orderId);
+  /* squad-fisio-w3: promemoria locale della richiesta (solo browser, nessun invio) */
+  try {
+    if (window.FisioReminders && typeof window.FisioReminders.registra === 'function') {
+      var primoTratt = (d.righe && d.righe.length && d.righe[0] && d.righe[0].nome) ? d.righe[0].nome : '';
+      window.FisioReminders.registra({ orderId: orderId, nome: d.nome, trattamento: primoTratt, quando: d.orario || '' });
+    }
+  } catch (eRem) { /* promemoria opzionale: mai bloccare la prenotazione */ }
   showConferma(orderId);
   if (!popupOk) {
     var btnRiapri = $('conferma-riapri');
