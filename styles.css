@@ -296,6 +296,11 @@ img { max-width: 100%; }
 }
 .btn-add.in-cart { background: var(--primario-scuro); }
 .btn-add.in-cart::after { content: " Scelto"; }
+.btn-add, .btn-remove, .cta, .btn-wapp, .btn-ghost, .cta-whatsapp,
+.recensioni-cta, .slot-chip, .day-btn, .faq-item summary,
+#cartbar, .topnav-links a, #sticky-cta a {
+  touch-action: manipulation;
+}
 .btn-add:active { transform: scale(0.96); }
 .btn-remove {
   background: var(--card);
@@ -460,9 +465,10 @@ img { max-width: 100%; }
 .riga .r-prezzo { font-size: 0.95rem; font-weight: 800; color: var(--primario-scuro); white-space: nowrap; }
 .qty { display: flex; align-items: center; gap: 8px; }
 .qty button {
-  width: 32px; height: 32px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%; /* target 44px a11y (W7 05/10/2026) */
   border: 1px solid var(--bordo); background: #fff;
   font-size: 1.1rem; cursor: pointer;
+  touch-action: manipulation;
 }
 .qty .q { min-width: 20px; text-align: center; font-weight: 700; }
 .r-rimuovi { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.05rem; min-width: 44px; min-height: 44px; }
@@ -521,6 +527,15 @@ img { max-width: 100%; }
   border: 2px solid #B91C1C;
   background: #FFF7F7;
 }
+/* Hook ARIA (aria-describedby / aria-invalid): stesso stile anche quando
+   lo stato errore è esposto via attributi ARIA invece che via classe (W7) */
+#ordine-form input[aria-invalid="true"],
+#ordine-form select[aria-invalid="true"],
+#ordine-form textarea[aria-invalid="true"] {
+  border: 2px solid #B91C1C;
+  background: #FFF7F7;
+}
+.campo-err::before { content: "\26A0\FE0E  "; } /* icona avviso non-emoji per SR */
 .avviso {
   background: var(--warn-bg);
   color: var(--warn-testo);
@@ -804,7 +819,7 @@ img { max-width: 100%; }
   background: none;
   border: none;
   padding: 10px 14px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62); /* contrasto WCAG AA su petrolio (W7 05/10/2026) */
   font-size: 0.78rem;
   text-decoration: underline;
   cursor: pointer;
@@ -853,6 +868,7 @@ img { max-width: 100%; }
   border: 1.5px solid var(--bordo);
   border-radius: 999px;
   padding: 11px 26px;
+  min-height: 44px; /* target 44px a11y (W7 05/10/2026) */
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -1055,33 +1071,57 @@ img { max-width: 100%; }
   text-decoration: none;
   transition: top 0.15s ease;
 }
-.skip-link:focus-visible { top: 12px; }
+.skip-link:focus, .skip-link:focus-visible { top: 12px; }
 
+/* Indicatore di focus forte e ad alto contrasto per la navigazione da tastiera
+   (W7 a11y 05/10/2026): anello da 3px su TUTTI gli elementi focalizzabili. */
 :focus-visible {
-  outline: 2px solid var(--primario);
+  outline: 3px solid var(--primario);
   outline-offset: 2px;
 }
-.btn-add:focus-visible,
-.btn-remove:focus-visible,
-#drawer-chiudi:focus-visible,
-.qty button:focus-visible,
-#cartbar:focus-visible,
-.cta:focus-visible,
-.btn-wapp:focus-visible,
-.btn-ghost:focus-visible,
-.cta-whatsapp:focus-visible,
-.recensioni-cta:focus-visible {
-  outline-width: 3px;
+/* Su sfondi scuri il petrolio non avrebbe contrasto: outline bianco */
+.hero :focus-visible,
+.foot :focus-visible,
+#cartbar :focus-visible,
+#sticky-cta :focus-visible,
+.totali :focus-visible,
+#demo-banner :focus-visible {
+  outline-color: #fff;
+}
+/* I campi form azzerano l'outline su :focus: per la tastiera ripristino
+   un anello solido ben visibile al posto del solo box-shadow tenue */
+#ordine-form input:focus-visible,
+#ordine-form select:focus-visible,
+#ordine-form textarea:focus-visible,
+.admin-blocco input:focus-visible,
+.admin-blocco select:focus-visible {
+  outline: 3px solid var(--primario);
   outline-offset: 2px;
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  html:focus-within { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+}
+
+/* Contrasto alto richiesto dall'utente: testi secondari più scuri */
+@media (prefers-contrast: more) {
+  :root { --muted: #4B5563; }
+  .hero-sub, .hero-zone, .hero-orari { color: #fff; }
+  .foot, .foot .muted { color: #fff; }
+}
+
+/* Windows High Contrast / forced colors: indicatori sempre visibili */
+@media (forced-colors: active) {
+  :focus-visible { outline: 3px solid Highlight; }
+  .skip-link { border: 2px solid ButtonText; }
 }
 
 /* ===== Prenotazione con giorno + slot (disponibilità reali) ===== */
@@ -1289,5 +1329,7 @@ body:has(#admin-panel:not([hidden])) #sticky-cta {
 .disp-azioni button {
   padding: 6px 10px; border-radius: 8px; border: 1px solid #cfd8d3;
   background: #f7faf9; cursor: pointer; font-size: 0.82rem;
+  min-height: 44px; min-width: 44px; /* target 44px a11y (W7 05/10/2026) */
+  touch-action: manipulation;
 }
 .disp-azioni button:hover { background: #e6f4f1; }
