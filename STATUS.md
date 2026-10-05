@@ -1,6 +1,14 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 05/10/2026 ~02:00 CEST**
+**Ultimo aggiornamento: 05/10/2026 ~13:25 CEST**
+
+## 05/10/2026 ~13:25 CEST — squadra 10 worker (ordine: 2h, task non sovrapposti)
+- **Infrastruttura instabile**: la piattaforma ha riavviato il daemon 3 volte (~12:26, ~12:51, ~12:56 CEST), uccidendo tutti i worker non ancora pushati. Totale worker spawnati: 21 (10 wave-1 + 10 wave-2 + 1 retry W2).
+- **Atterrati via worker** (verificati su main): `5cfb566` hero.jpg 448KB→~170KB [W8]; `261d153` nuova pagina zone-servite.html [W6]; `a90ae7f` CSS a11y (focus 3px, reduced-motion, skip-link, target 44px) [W7]; `26bf2fd` SEO head (keywords + LocalBusiness JSON-LD) [W2]; `970ad1c` sitemap con zone-servite.html [W2].
+- **Completati dal coordinatore** (lavoro residuo, push immediati): `7aaf388` reminders.js (promemoria locali: localStorage + banner + .ics, nessun invio) [W3]; `ef8fd6c` script tag reminders + link footer a zone-servite.html [W3/W6]; `f035958` hook FisioReminders.registra in completaPrenotazione (app.js) [W3]; `de06b2e` README aggiornato + rimosso nome proprietario da file pubblico [W9].
+- **Recensioni**: sezione + render già presenti (da tenant.recensioni), CTA WhatsApp "Lascia la tua recensione" attivo. NESSUNA recensione inventata: l'array resta vuoto finché non arrivano testimonianze reali.
+- robots.txt: già OK (Allow + Sitemap). FAQ: già presente (12 Q&A + FAQPage JSON-LD, dal 30/09). Booking UX: flusso già solido (step indicator, validazione inline, conferma post-invio, anti-doppio-tap) — nessun intervento necessario.
+- Prossimo: verifica live del deploy Vercel sui nuovi commit.
 
 ## 05/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
 - **04/10 16:40 — squadra FISIO (sprint 1h): 2 bug reali trovati e fixati** — popup wa.me bloccato dopo async (commit `b4661060`), slot resta occupato se POST fallisce (commit `b2989c1`, HEAD); UX mobile safe-area/tap target (`3ef3b3b`). QA live: md5 app.js = repo, nessun bug residuo.
