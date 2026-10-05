@@ -1,6 +1,11 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 04/10/2026 ~02:00 CEST**
+**Ultimo aggiornamento: 05/10/2026 ~02:00 CEST**
+
+## 05/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **04/10 16:40 — squadra FISIO (sprint 1h): 2 bug reali trovati e fixati** — popup wa.me bloccato dopo async (commit `b4661060`), slot resta occupato se POST fallisce (commit `b2989c1`, HEAD); UX mobile safe-area/tap target (`3ef3b3b`). QA live: md5 app.js = repo, nessun bug residuo.
+- Blocchi: nessuno. Patch header locale: non applicabile a questo repo.
+
 
 ## 04/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
 - **03/10 00:44–01:43 — pannello admin Vendite/Incassi + configurazione Supabase reale** (tabelle `fisio_incassi`, `orto_*` su progetto `warehouse-mobile` West EU; test E2E INSERT/READ/DELETE OK).
