@@ -36,6 +36,7 @@ adattato alla tipologia **prenotazioni**.
 ├── og-image.png               # immagine anteprima link (WhatsApp/Facebook)
 ├── robots.txt / sitemap.xml   # SEO di base
 ├── zone-servite.html          # pagina SEO locale (Varese + Ticino sud Lugano)
+├── trattamento-*.html         # 4 pagine SEO per trattamento (riabilitazione, dolori muscolari, ginnastica posturale, massoterapia)
 ├── tenant.json                # TEMPLATE per nuovi tenant
 ├── tenants/
 │   └── roberta-fisioterapista.json  # configurazione attività
@@ -47,7 +48,8 @@ Il tenant si sceglie con `?tenant=<slug>` (default: `roberta-fisioterapista`).
 
 ## Funzionalità aggiunte (05/10/2026)
 
-- **FAQ** in `index.html` (12 domande) + `FAQPage` JSON-LD per i rich snippet Google.
+- **FAQ** in `index.html` (16 domande) + `FAQPage` JSON-LD per i rich snippet Google.
+- **Pagine trattamenti** (`trattamento-riabilitazione.html`, `trattamento-dolori-muscolari.html`, `trattamento-ginnastica-posturale.html`, `trattamento-massoterapia.html`): SEO per trattamento con `Service` + `FAQPage` + `BreadcrumbList` JSON-LD, link incrociati tra loro e con home/zone; sitemap aggiornata. (07/10/2026, blitz B)
 - **Pagina zone servite** (`zone-servite.html`): SEO locale per provincia di
   Varese e Canton Ticino a sud di Lugano, con CTA WhatsApp.
 - **Promemoria prenotazioni** (`reminders.js`): ogni richiesta inviata viene
