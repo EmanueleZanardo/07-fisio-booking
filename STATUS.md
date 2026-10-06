@@ -1,6 +1,11 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 05/10/2026 ~13:25 CEST**
+**Ultimo aggiornamento: 06/10/2026 ~02:05 CEST**
+
+## 06/10/2026 ~02:05 CEST — aggiornamento documentale giornaliero
+- **Commit `59edc34` (05/10 12:00 UTC):** docs STATUS.md — report squadra W10.
+- **05/10 ~13:25 — squadra 10 worker:** piattaforma ha riavviato il daemon 3 volte (worker uccisi prima del push); atterrati: ottimizzazione hero.jpg 448KB→170KB, pagina zone-servite.html, CSS a11y, SEO head (LocalBusiness JSON-LD), sitemap aggiornata, reminders.js (promemoria locali), README (rimosso nome proprietario). Nessuna recensione inventata.
+- Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 €/45 min, solo domicilio). Blocchi: nessuno lato repo; monitor lead WhatsApp disattivato (29/09). Prossimo: verifica live deploy Vercel sui nuovi commit.
 
 ## 05/10/2026 ~13:25 CEST — squadra 10 worker (ordine: 2h, task non sovrapposti)
 - **Infrastruttura instabile**: la piattaforma ha riavviato il daemon 3 volte (~12:26, ~12:51, ~12:56 CEST), uccidendo tutti i worker non ancora pushati. Totale worker spawnati: 21 (10 wave-1 + 10 wave-2 + 1 retry W2).
