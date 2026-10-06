@@ -53,13 +53,15 @@
     { "@type": "City", "name": "Malnate", "addressRegion": "VA", "addressCountry": "IT" },
     { "@type": "City", "name": "Arcisate", "addressRegion": "VA", "addressCountry": "IT" },
     { "@type": "City", "name": "Induno Olona", "addressRegion": "VA", "addressCountry": "IT" },
+    { "@type": "City", "name": "Luino", "addressRegion": "VA", "addressCountry": "IT" },
     { "@type": "City", "name": "Mendrisio", "addressRegion": "TI", "addressCountry": "CH" },
     { "@type": "City", "name": "Chiasso", "addressRegion": "TI", "addressCountry": "CH" },
     { "@type": "City", "name": "Balerna", "addressRegion": "TI", "addressCountry": "CH" },
     { "@type": "City", "name": "Stabio", "addressRegion": "TI", "addressCountry": "CH" },
     { "@type": "City", "name": "Vacallo", "addressRegion": "TI", "addressCountry": "CH" },
     { "@type": "City", "name": "Morbio Inferiore", "addressRegion": "TI", "addressCountry": "CH" },
-    { "@type": "City", "name": "Riva San Vitale", "addressRegion": "TI", "addressCountry": "CH" }
+    { "@type": "City", "name": "Riva San Vitale", "addressRegion": "TI", "addressCountry": "CH" },
+    { "@type": "City", "name": "Lugano", "addressRegion": "TI", "addressCountry": "CH" }
   ],
   "description": "Sedute di fisioterapia a domicilio per persone anziane: riabilitazione, dolori muscolari e articolari, ginnastica posturale, massoterapia. 40 € per seduta da 45 minuti, pagamento di persona a fine trattamento.",
   "paymentAccepted": "Cash",
@@ -177,6 +179,26 @@
       "@type": "Question",
       "name": "In che lingua avvengono le visite?",
       "acceptedAnswer": { "@type": "Answer", "text": "In italiano." }
+    },
+    {
+      "@type": "Question",
+      "name": "Che differenza c'è tra i quattro trattamenti?",
+      "acceptedAnswer": { "@type": "Answer", "text": "La riabilitazione è un percorso di recupero dopo infortuni o interventi; i dolori muscolari e articolari sono sedute mirate sulle zone dolorose (schiena, collo, spalle, ginocchia); la ginnastica posturale lavora con esercizi guidati su postura e mobilità; la massoterapia è un trattamento manuale decontratturante o rilassante. Se non sai quale scegliere, descrivici la situazione su WhatsApp e ne parliamo insieme." }
+    },
+    {
+      "@type": "Question",
+      "name": "Arrivate anche nel Mendrisiotto e a Lugano?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Sì: nel Mendrisiotto raggiungiamo Mendrisio, Chiasso, Balerna, Stabio, Vacallo, Morbio Inferiore e dintorni, e in generale le zone a sud di Lugano. La pagina delle zone servite elenca tutti i comuni coperti." }
+    },
+    {
+      "@type": "Question",
+      "name": "Fate sedute la sera o il sabato?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Dal lunedì al venerdì dalle 9:00 alle 19:00 e il sabato dalle 9:00 alle 13:00; la domenica siamo chiusi. Il giorno e l'orario definitivi si concordano comunque in chat WhatsApp." }
+    },
+    {
+      "@type": "Question",
+      "name": "Ogni quanto bisogna fare le sedute?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Dipende dalla situazione: dopo la prima valutazione Roberta propone un piano di lavoro. Non ci sono pacchetti obbligatori: si prenota una seduta alla volta e il percorso viene rivalutato man mano." }
     }
   ]
 }
@@ -190,6 +212,14 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+<style>
+/* seo-trattamenti: griglia dei link alle pagine dedicate ai trattamenti */
+.tratt-pagine-lista { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.tratt-pagine-lista a { display: block; background: #fff; border: 1px solid #e6f0ec; border-radius: 12px; padding: 12px 14px; text-decoration: none; color: inherit; }
+.tratt-pagine-lista a:hover { border-color: #0E7C6B; }
+.tratt-pagine-lista strong { display: block; color: #0E7C6B; }
+.tratt-pagine-lista span { font-size: 0.85rem; color: var(--muted, #5b6b66); }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#menu">Salta al contenuto principale</a>
@@ -257,6 +287,16 @@
 <p id="menu-avviso" class="avviso" hidden></p>
 
 <main id="menu"></main>
+
+<nav class="tratt-pagine" aria-label="Approfondimenti sui trattamenti">
+  <p class="muted small" style="margin-top:22px">📖 Vuoi saperne di più? Ogni trattamento ha la sua pagina dedicata:</p>
+  <ul class="tratt-pagine-lista">
+    <li><a href="trattamento-riabilitazione.html"><strong>Riabilitazione</strong><span>Recupero dopo infortuni e interventi, a domicilio.</span></a></li>
+    <li><a href="trattamento-dolori-muscolari.html"><strong>Dolori muscolari e articolari</strong><span>Schiena, collo, spalle, ginocchia: sedute mirate.</span></a></li>
+    <li><a href="trattamento-ginnastica-posturale.html"><strong>Ginnastica posturale</strong><span>Postura, mobilità ed equilibrio con esercizi guidati.</span></a></li>
+    <li><a href="trattamento-massoterapia.html"><strong>Massoterapia</strong><span>Decontratturante e rilassante, per sciogliere le tensioni.</span></a></li>
+  </ul>
+</nav>
 </section>
 
 <section class="come-funziona" id="come-funziona" aria-label="Come funziona">
@@ -369,6 +409,22 @@
   <details class="faq-item">
     <summary>In che lingua avvengono le visite?</summary>
     <p>In italiano.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Che differenza c'è tra i quattro trattamenti?</summary>
+    <p>La <strong>riabilitazione</strong> è un percorso di recupero dopo infortuni o interventi; i <strong>dolori muscolari e articolari</strong> sono sedute mirate sulle zone dolorose (schiena, collo, spalle, ginocchia); la <strong>ginnastica posturale</strong> lavora con esercizi guidati su postura e mobilità; la <strong>massoterapia</strong> è un trattamento manuale decontratturante o rilassante. Se non sai quale scegliere, descrivici la situazione su WhatsApp e ne parliamo insieme. <a href="trattamento-riabilitazione.html">Approfondisci i trattamenti →</a></p>
+  </details>
+  <details class="faq-item">
+    <summary>Arrivate anche nel Mendrisiotto e a Lugano?</summary>
+    <p>Sì: nel Mendrisiotto raggiungiamo Mendrisio, Chiasso, Balerna, Stabio, Vacallo, Morbio Inferiore e dintorni, e in generale le zone a sud di Lugano. La <a href="zone-servite.html">pagina delle zone servite</a> elenca tutti i comuni coperti.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Fate sedute la sera o il sabato?</summary>
+    <p>Dal lunedì al venerdì dalle 9:00 alle 19:00 e il sabato dalle 9:00 alle 13:00; la domenica siamo chiusi. Il giorno e l'orario definitivi si concordano comunque in chat WhatsApp.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Ogni quanto bisogna fare le sedute?</summary>
+    <p>Dipende dalla situazione: dopo la prima valutazione Roberta propone un piano di lavoro. Non ci sono pacchetti obbligatori: si prenota una seduta alla volta e il percorso viene rivalutato man mano.</p>
   </details>
 </section>
 
