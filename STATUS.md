@@ -1,6 +1,12 @@
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 06/10/2026 ~02:05 CEST**
+**Ultimo aggiornamento: 07/10/2026 ~02:10 CEST**
+
+## 07/10/2026 ~02:10 CEST — aggiornamento documentale giornaliero
+- **Commit `5f2b098c` (07/10 00:01 UTC):** blitz-A — a11y/perf head: preload hero.jpg (LCP), aria-modal sulla conferma, role=status sull'avviso.
+- Squadra 10 worker 05/10: hero.jpg 448KB→170KB, pagina zone-servite.html, CSS a11y, SEO head (LocalBusiness JSON-LD), sitemap, reminders.js, README senza nome proprietario. Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 €/45 min, solo domicilio).
+- Prossimo: verifica live deploy Vercel sui nuovi commit (rate limit potrebbe toccare anche questo repo — verificare prima del push).
+- Blocchi: nessuno lato repo; monitor lead WhatsApp disattivato (29/09).
 
 ## 06/10/2026 ~02:05 CEST — aggiornamento documentale giornaliero
 - **Commit `59edc34` (05/10 12:00 UTC):** docs STATUS.md — report squadra W10.
