@@ -236,6 +236,10 @@ function applyTenant() {
   bindUI();
   renderCart();
   renderRecensioni(); // solidita: agganciato al caricamento tenant (niente polling)
+  /* blitz-robustezza: disponibilità reali subito a tenant caricato — prima
+   * partivano da un polling con timeout di 10 s: se il fetch del tenant era
+   * lento, il picker giorno/slot non si attivava mai. */
+  dispLoad();
 }
 
 function renderMenu() {
@@ -329,6 +333,10 @@ function renderOrarioSelect(slot) {
   }
   if (!slot.length) {
     var o = document.createElement('option');
+    /* blitz-a11y: value esplicito '' — senza, .value ritornerebbe il testo
+     * dell'opzione disabilitata e finirebbe nel messaggio WhatsApp come
+     * "orario scelto". */
+    o.value = '';
     o.textContent = 'Nessuna fascia disponibile — scrivici in chat';
     o.disabled = true;
     sel.appendChild(o);
@@ -514,8 +522,9 @@ function closeDrawer() {
   $('drawer').hidden = true;
   $('drawer-sfondo').hidden = true;
   document.body.style.overflow = '';
-  // ciclo2-ux-mobile: rimuove i listener e ripristina il focus sul trigger
-  document.removeEventListener('keydown', ciclo2Keydown);
+  /* blitz-a11y: il listener resta attivo finché la conferma è aperta (ESC +
+   * focus trap servono anche lì); lo rimuove hideConferma alla chiusura. */
+  if ($('conferma').hidden) document.removeEventListener('keydown', ciclo2Keydown);
   if (ciclo2LastFocus && typeof ciclo2LastFocus.focus === 'function') {
     try { ciclo2LastFocus.focus(); } catch (e) { /* focus opzionale */ }
   }
@@ -575,17 +584,42 @@ function trackPrenotazione(orderId) {
   } catch (e) { /* analytics opzionale */ }
 }
 
-/* Schermata di conferma post-prenotazione */
+/* Visibilità reale di un elemento (per ripristini focus sicuri) */
+function elVisibile(el) {
+  return !!el && !el.hidden && el.getClientRects().length > 0;
+}
+
+/* Schermata di conferma post-prenotazione — blitz-a11y: gestione focus da
+ * alertdialog (focus dentro il dialog all'apertura, ESC per chiudere,
+ * ripristino del focus alla chiusura), chiusura del drawer e svuotamento
+ * del carrello (niente invii doppi accidentali dalla cartbar). */
+var confermaLastFocus = null;
+
 function showConferma(orderId) {
+  closeDrawer(); // la prenotazione è completata: niente drawer sotto la conferma
+  confermaLastFocus = document.activeElement;
+  carrello = {};
+  renderCart(); // nasconde anche la cartbar
   $('conferma-id').textContent = '(' + orderId + ')';
   $('conferma').hidden = false;
   $('conferma-sfondo').hidden = false;
   document.body.style.overflow = 'hidden';
+  document.addEventListener('keydown', ciclo2Keydown); // idempotente: stesso riferimento
+  var target = $('conferma-riapri');
+  if (target && typeof target.focus === 'function') {
+    try { target.focus(); } catch (e) { /* focus opzionale */ }
+  }
 }
 function hideConferma() {
   $('conferma').hidden = true;
   $('conferma-sfondo').hidden = true;
   document.body.style.overflow = '';
+  if ($('drawer').hidden) document.removeEventListener('keydown', ciclo2Keydown);
+  /* non forzare il focus su elementi nascosti (es. la cartbar, svuotata) */
+  if (elVisibile(confermaLastFocus)) {
+    try { confermaLastFocus.focus(); } catch (e) { /* focus opzionale */ }
+  }
+  confermaLastFocus = null;
 }
 
 function formError(msg) {
@@ -670,8 +704,20 @@ function onSubmit(ev) {
 
   /* ux-mobile: la fascia oraria va scelta davvero (placeholder vuoto di default) */
   if (!orario) {
-    uxSetOrarioErrore('Scegli una fascia oraria preferita.');
-    formError('Scegli una fascia oraria preferita.');
+    /* blitz-validazione: se non esiste proprio nessuna fascia (select con la
+     * sola opzione disabilitata), l'errore dice di scrivere in chat invece di
+     * chiedere di "scegliere" qualcosa che non c'è. */
+    var haFasce = false;
+    var opts = $('f-orario').options;
+    for (var oi = 0; oi < opts.length; oi++) {
+      if (!opts[oi].disabled && opts[oi].value) { haFasce = true; break; }
+    }
+    if (haFasce) {
+      uxSetOrarioErrore('Scegli una fascia oraria preferita.');
+      formError('Scegli una fascia oraria preferita.');
+    } else {
+      formError('Nessuna fascia disponibile al momento: scrivici direttamente in chat WhatsApp.');
+    }
     $('f-orario').focus();
     sbloccaBtn();
     return;
@@ -803,18 +849,22 @@ function ciclo2ValidaCampo(id) {
   return !msg;
 }
 
-/* ESC chiude il drawer; Tab resta intrappolato nel drawer (focus trap leggera). */
+/* ESC chiude drawer/conferma; Tab resta intrappolato nel livello visibile più
+ * in alto (conferma sopra il drawer). Blitz-a11y: la conferma è un
+ * alertdialog con focus gestito, non un semplice overlay. */
 function ciclo2Keydown(ev) {
-  if ($('drawer').hidden) return;
+  var confermaAperta = !$('conferma').hidden;
+  var drawerAperto = !$('drawer').hidden;
+  if (!confermaAperta && !drawerAperto) return;
   if (ev.key === 'Escape' || ev.key === 'Esc') {
     ev.preventDefault();
-    closeDrawer();
+    if (confermaAperta) hideConferma();
+    else closeDrawer();
     return;
   }
   if (ev.key !== 'Tab') return;
-  if (!$('conferma').hidden) return; // la schermata di conferma ha la priorità
-  var drawer = $('drawer');
-  var focusables = drawer.querySelectorAll(
+  var scope = confermaAperta ? $('conferma') : $('drawer');
+  var focusables = scope.querySelectorAll(
     'a[href], button:not([disabled]), input:not([disabled]), ' +
     'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
   );
@@ -1630,15 +1680,9 @@ function dispAdminBind() {
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', function () {
     dispAdminBind();
-    // dispLoad parte dopo initTenant: se tenant già pronto lo chiama subito
-    var attese = 0;
-    var timer = setInterval(function () {
-      attese++;
-      if ((typeof tenant !== 'undefined' && tenant) || attese > 40) {
-        clearInterval(timer);
-        dispLoad();
-      }
-    }, 250);
+    /* blitz-robustezza: dispLoad() è chiamato da applyTenant() a tenant
+     * caricato — rimosso il polling con timeout di 10 s (race: con fetch
+     * lento del tenant il picker degli slot reali non partiva mai). */
     // ricarica admin ogni volta che si apre il pannello
     var _adminShow = (typeof adminShow !== 'undefined') ? adminShow : null;
     if (_adminShow) {
