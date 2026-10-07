@@ -38,7 +38,12 @@ function validWhatsapp(t) {
 
 function truncateNote(note) {
   note = String(note || '').trim();
-  if (note.length > MAX_NOTE_CHARS) return note.slice(0, MAX_NOTE_CHARS - 1) + '…';
+  /* blitz-robustezza: troncamento per code point (Array.from), non per unità
+   * UTF-16 — tagliare in mezzo a una surrogate pair (emoji) creava un
+   * surrogato isolato e faceva crashare encodeURIComponent in buildWhatsUrl
+   * (URIError: URI malformed), bloccando l'invio col bottone disabilitato. */
+  var chars = Array.from(note);
+  if (chars.length > MAX_NOTE_CHARS) return chars.slice(0, MAX_NOTE_CHARS - 1).join('') + '…';
   return note;
 }
 
@@ -1462,6 +1467,16 @@ function dispPrenotaSlot(d) {
     .then(function (rows) {
       var s = (rows || [])[0];
       if (!s || s.stato !== 'libero') throw new Error('occupato');
+      /* blitz-atomicita: stima la lunghezza del wa.me PRIMA di occupare lo
+       * slot — se il messaggio supera MAX_URL_LEN, errore senza occupare
+       * niente. Prima il controllo avveniva in completaPrenotazione, DOPO
+       * PATCH+POST: slot bruciato e prenotazione fantasma senza WhatsApp. */
+      var orarioTxt = fmtDataLunga(s.data) + ' · ' + fmtOra(s.ora_inizio) + '–' + fmtOra(s.ora_fine);
+      var probe = buildWhatsUrl(tenant, buildMessage(tenant, d.righe, {
+        nome: d.nome, telefono: d.telefono, indirizzo: d.indirizzo,
+        orario: orarioTxt, note: d.note, orderId: 'PXXXX' // stessa lunghezza di un id reale
+      }));
+      if (probe.length > MAX_URL_LEN) throw new Error('troppo-lungo');
       /* squad-fisio-w2: PATCH condizionale sullo stato=libero — è il vero gate
          atomico (la GET sopra è solo fast-path). Se l'array restituito è vuoto,
          un altro utente ha occupato lo slot nel frattempo (race). */
@@ -1512,10 +1527,12 @@ function dispPrenotaSlot(d) {
       });
     })
     .catch(function (e) {
-      dispSlotErrore(e && e.message === 'occupato'
+      var motivo = e && e.message;
+      var msgLungo = 'Prenotazione troppo lunga per WhatsApp: chiamaci al +' + tenant.whatsapp + ' per completarla.';
+      dispSlotErrore(motivo === 'occupato'
         ? 'Questo orario è stato appena occupato: scegline un altro.'
-        : 'Errore di rete: riprova tra poco.');
-      formError('Non è stato possibile riservare lo slot: riprova.');
+        : (motivo === 'troppo-lungo' ? msgLungo : 'Errore di rete: riprova tra poco.'));
+      formError(motivo === 'troppo-lungo' ? msgLungo : 'Non è stato possibile riservare lo slot: riprova.');
       /* squad-fisio-w1: popup sync + fallback — niente tab vuota orfana */
       if (d.waWin && !d.waWin.closed) { try { d.waWin.close(); } catch (e2) { /* già chiusa */ } }
       dispLoad();
