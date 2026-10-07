@@ -206,6 +206,7 @@
 <link rel="stylesheet" href="styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="hero.jpg" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Vercel Web Analytics (senza cookie): abilitarlo nel dashboard del progetto Vercel -->
 <script>
@@ -284,7 +285,7 @@
 <p class="eyebrow">I trattamenti</p>
 <h2 class="sezione-titolo">Scegli il tuo percorso di cura</h2>
 <p class="muted small hint-trattamenti">Scegli un trattamento: si prenota un solo trattamento alla volta.</p>
-<p id="menu-avviso" class="avviso" hidden></p>
+<p id="menu-avviso" class="avviso" role="status" hidden></p>
 
 <main id="menu"></main>
 
@@ -635,7 +636,7 @@
 
 <!-- Schermata di conferma post-prenotazione -->
 <div id="conferma-sfondo" hidden></div>
-<section id="conferma" hidden role="alertdialog" aria-label="Richiesta preparata">
+<section id="conferma" hidden role="alertdialog" aria-modal="true" aria-label="Richiesta preparata">
   <div class="conferma-box">
     <div class="conferma-icona">✅</div>
     <h2>Richiesta preparata <span id="conferma-id"></span></h2>
