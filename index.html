@@ -492,17 +492,17 @@
     <h3>I tuoi dati</h3>
 
     <label>Nome e cognome *
-      <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Mario Rossi" enterkeyhint="next" aria-describedby="f-nome-err" required>
+      <input type="text" id="f-nome" autocomplete="name" placeholder="Es. Mario Rossi" enterkeyhint="next" aria-describedby="f-nome-err" maxlength="80" required>
       <p class="campo-err" id="f-nome-err" hidden></p>
     </label>
 
     <label>Telefono *
-      <input type="tel" id="f-telefono" autocomplete="tel" inputmode="tel" enterkeyhint="next" placeholder="Es. 345 111 4337" aria-describedby="f-telefono-err" required>
+      <input type="tel" id="f-telefono" autocomplete="tel" inputmode="tel" enterkeyhint="next" placeholder="Es. 345 111 4337" aria-describedby="f-telefono-err" maxlength="30" required>
       <p class="campo-err" id="f-telefono-err" hidden></p>
     </label>
 
     <label id="wrap-indirizzo">Indirizzo *
-      <input type="text" id="f-indirizzo" autocomplete="street-address" enterkeyhint="next" placeholder="Via, numero, località" aria-describedby="f-indirizzo-err">
+      <input type="text" id="f-indirizzo" autocomplete="street-address" enterkeyhint="next" placeholder="Via, numero, località" aria-describedby="f-indirizzo-err" maxlength="120">
       <p class="campo-err" id="f-indirizzo-err" hidden></p>
     </label>
 
