@@ -1051,6 +1051,8 @@ function loadChartJs() {
     chartJsPromise = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+      s.integrity = 'sha384-9nhczxUqK87bcKHh20fSQcTGD4qq5GhayNYSYWqwBkINBhOfQLg/P5HG5lF1urn4';
+      s.crossOrigin = 'anonymous';
       s.onload = function () { resolve(); };
       s.onerror = function () { reject(new Error('Chart.js non caricato')); };
       document.head.appendChild(s);
