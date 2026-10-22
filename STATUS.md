@@ -1,6 +1,86 @@
+**Ultimo aggiornamento: 22/10/2026 ~02:00 CEST**
+
+## 22/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 21–22/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- **SBLOCCO FREEZE 21/10 (ordine Emanuele): il push cumulativo per 07 NON è stato eseguito di proposito** — protezione: il remoto (hardening CSP 13/10) è più avanti dei clone locali, pushare il sito avrebbe cancellato le 4 pagine trattamento dal live; serve prima un sync del clone dal remoto. **STATUS.md invece si pusha normalmente da questo job (singolo file, nessun rischio per gli altri file): in questo push recuperate le 25 sezioni accumulate durante il freeze.**
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 21/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 20–21/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` invariato (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato → coda cumulativa preservata (25 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 20/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 19–20/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` invariato (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata (24 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 19/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 18–19/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata (23 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 18/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 17–18/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata (22 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 17/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 16–17/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata (21 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
 # STATUS.md — 07-fisio-booking (Prenotazioni fisioterapista Roberta)
 
-**Ultimo aggiornamento: 07/10/2026 ~02:10 CEST**
+**Ultimo aggiornamento: 16/10/2026 ~02:00 CEST**
+
+## 16/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 15–16/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata (20 sezioni).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 15/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 14–15/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Remote HEAD `3bd752a` (hardening 13/10 23:14: CSP in vercel.json, X-Frame-Options DENY, SRI su Chart.js). STATUS.md del remoto NON toccato -> coda cumulativa preservata.
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 14/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 13–14/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- **Hardening 13/10 23:14 (HEAD remoto `3bd752a`):** CSP in vercel.json (con domini fonts/jsdelivr/supabase), X-Frame-Options DENY, SRI su Chart.js. STATUS.md del remoto NON toccato -> coda cumulativa preservata.
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push da questo job — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
+## 13/10/2026 ~02:05 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento 12–13/10.** Remote HEAD `bc1ef89` invariato dal 07/10. Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi: monitor lead WhatsApp disattivato (29/09); PIN admin hardcoded nel sorgente pubblico (NOTO, non fixato — serve Supabase Auth, decisione sua).
+
+## 12/10/2026 ~02:05 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento 11–12/10.** Remote HEAD `bc1ef89` invariato dal 07/10. Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi: monitor lead WhatsApp disattivato (29/09); PIN admin hardcoded nel sorgente pubblico (NOTO, non fixato — serve Supabase Auth, decisione sua).
+
+## 11/10/2026 ~02:10 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento 10–11/10.** Remote HEAD `bc1ef89` invariato dal 07/10 (blitz-A: probe lunghezza wa.me + truncateNote sicura per emoji). Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi: monitor lead WhatsApp disattivato (29/09); PIN admin hardcoded nel sorgente pubblico (NOTO, non fixato — serve Supabase Auth, decisione sua).
+
+## 10/10/2026 ~02:10 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento 09–10/10.** Remote HEAD `bc1ef89` invariato dal 07/10 (blitz-A: probe lunghezza wa.me + truncateNote sicura per emoji). Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 €/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push — documentazione preparata in locale, accumulata cumulativamente per il post-sblocco.
+- Blocchi: monitor lead WhatsApp disattivato (29/09); ⚠️ bug grave noto NON fixato: PIN admin hardcoded nel sorgente pubblico — serve Supabase Auth, decisione sua.
+
+## 09/10/2026 ~02:05 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento 08–09/10.** Remote HEAD `bc1ef89` invariato dal 07/10 (blitz-A: probe lunghezza wa.me + truncateNote sicura per emoji). Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 €/45 min, solo domicilio).
+- PUSH FREEZE Vercel dal 07/10 ~05:10 invariato: zero push — documentazione preparata in locale, accumulata per il post-sblocco.
+- Blocchi: monitor lead WhatsApp disattivato (29/09); nessuno lato repo.
 
 ## 07/10/2026 ~02:10 CEST — aggiornamento documentale giornaliero
 - **Commit `5f2b098c` (07/10 00:01 UTC):** blitz-A — a11y/perf head: preload hero.jpg (LCP), aria-modal sulla conferma, role=status sull'avviso.
