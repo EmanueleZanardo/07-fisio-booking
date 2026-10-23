@@ -1,4 +1,9 @@
-**Ultimo aggiornamento: 22/10/2026 ~02:00 CEST**
+**Ultimo aggiornamento: 23/10/2026 ~02:00 CEST**
+
+## 23/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
+- **Nessun nuovo evento di prodotto 22–23/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
+- Blocchi APERTI (sicurezza, decisione sua): RLS "mobile full access" using(true) su prenotazioni — nomi/telefoni/note leggibili con anon key pubblica; PIN admin in chiaro + login via sessionStorage (serve Supabase Auth). Monitor lead WhatsApp disattivato (29/09).
+
 
 ## 22/10/2026 ~02:00 CEST — aggiornamento documentale giornaliero
 - **Nessun nuovo evento di prodotto 21–22/10.** Sito live https://fisio-roberta.vercel.app/ (4 trattamenti 40 EUR/45 min, solo domicilio; pannello admin statistiche incassi su Supabase).
