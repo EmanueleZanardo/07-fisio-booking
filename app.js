@@ -1553,7 +1553,7 @@ function dispPrenotaSlot(d) {
 }
 
 /* =====================================================================
- * Admin — gestione disponibilità (stesso PIN admin123, sessione esistente)
+ * Admin — gestione disponibilità (stessa sessione admin Supabase Auth)
  * ===================================================================== */
 function dispAdminErr(msg) {
   var e = $('admin-avviso');
