@@ -15,7 +15,7 @@
 
 -- Elenco admin autorizzati
 create table if not exists public.fisio_admin (email text primary key);
-insert into public.fisio_admin (email) values ('ADMIN_EMAIL_QUI')
+insert into public.fisio_admin (email) values ('emanuele1998zanardo@gmail.com')
   on conflict do nothing;
 alter table public.fisio_admin enable row level security;
 -- nessuna policy: la tabella non è leggibile dal sito
