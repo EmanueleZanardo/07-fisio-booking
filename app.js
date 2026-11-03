@@ -951,7 +951,39 @@ function renderRecensioni() {
  * ===================================================================== */
 var SUPABASE_URL = 'https://poyodlfqxoprmictvmaj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBveW9kbGZxeG9wcm1pY3R2bWFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NzM2ODEsImV4cCI6MjEwNjU0OTY4MX0.pcOHsGfrQwEQ3XwldYOoqviw_BMg55aPsJ4R6lF_Ks0';
-var ADMIN_PIN = 'admin123';
+/* Accesso admin: Supabase Auth (email + password dell'utente admin creato in
+ * Supabase → Authentication). Il token resta solo in sessionStorage e scade
+ * con la sessione Supabase (~1 h). Le regole RLS lato database
+ * (security/2026-11-02-rls-admin-auth.sql) concedono prenotazioni e incassi
+ * solo agli email presenti in fisio_admin. */
+var ADMIN_SESSION_KEY = 'fisio_admin_session';
+
+function adminToken() {
+  try {
+    var s = JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY) || 'null');
+    if (s && s.token && s.exp > Date.now() + 30000) return s.token;
+  } catch (e) { /* sessionStorage opzionale */ }
+  return null;
+}
+
+function adminLogin(email, password) {
+  return fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password })
+  }).then(function (r) {
+    return r.json().then(function (j) {
+      if (!r.ok || !j.access_token) throw new Error('login');
+      try {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
+          token: j.access_token,
+          exp: Date.now() + (j.expires_in || 3600) * 1000
+        }));
+      } catch (e) {}
+      return j.access_token;
+    });
+  });
+}
 
 var adminChartMesi = null;
 var adminChartTratt = null;
@@ -968,7 +1000,7 @@ function sb(path, opts) {
   opts = opts || {};
   var h = {
     'apikey': SUPABASE_ANON_KEY,
-    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + (adminToken() || SUPABASE_ANON_KEY),
     'Content-Type': 'application/json'
   };
   if (opts.headers) Object.keys(opts.headers).forEach(function (k) { h[k] = opts.headers[k]; });
@@ -989,13 +1021,13 @@ function adminAvviso(msg) {
 /* ---------- PIN ---------- */
 function adminOpenPin() {
   try {
-    if (sessionStorage.getItem('fisio_admin') === '1') { adminShow(); return; }
+    if (adminToken()) { adminShow(); return; }
   } catch (e) { /* sessionStorage opzionale */ }
   $('pin-panel').hidden = false;
   $('pin-sfondo').hidden = false;
   $('pin-err').hidden = true;
   $('pin-input').value = '';
-  setTimeout(function () { try { $('pin-input').focus(); } catch (e) {} }, 50);
+  setTimeout(function () { try { $('pin-email').focus(); } catch (e) {} }, 50);
 }
 
 function adminClosePin() {
@@ -1005,14 +1037,14 @@ function adminClosePin() {
 
 function onPinSubmit(ev) {
   ev.preventDefault();
-  if ($('pin-input').value === ADMIN_PIN) {
-    try { sessionStorage.setItem('fisio_admin', '1'); } catch (e) {}
-    adminShow();
-  } else {
-    var e = $('pin-err');
-    e.hidden = false;
-    e.textContent = 'PIN errato.';
-  }
+  var e = $('pin-err');
+  e.hidden = true;
+  adminLogin($('pin-email').value.trim(), $('pin-input').value)
+    .then(function () { $('pin-input').value = ''; adminShow(); })
+    .catch(function () {
+      e.hidden = false;
+      e.textContent = 'Email o password errate.';
+    });
 }
 
 /* ---------- Apertura pannello ---------- */
@@ -1479,43 +1511,21 @@ function dispPrenotaSlot(d) {
         orario: orarioTxt, note: d.note, orderId: 'PXXXX' // stessa lunghezza di un id reale
       }));
       if (probe.length > MAX_URL_LEN) throw new Error('troppo-lungo');
-      /* squad-fisio-w2: PATCH condizionale sullo stato=libero — è il vero gate
-         atomico (la GET sopra è solo fast-path). Se l'array restituito è vuoto,
-         un altro utente ha occupato lo slot nel frattempo (race). */
-      return sb('fisio_slot?id=eq.' + s.id + '&stato=eq.libero', {
-        method: 'PATCH',
-        headers: { 'Prefer': 'return=representation' },
-        body: JSON.stringify({ stato: 'occupato' })
-      }).then(function (r2) {
-        if (!r2.ok) throw new Error('patch ' + r2.status);
-        return r2.json();
-      }).then(function (upd) {
-        if (!(upd || []).length) throw new Error('occupato');
-        return s;
-      });
-    })
-    .then(function (s) {
-      return sb('fisio_prenotazioni', {
+      /* Prenotazione atomica lato database: la funzione fisio_prenota occupa
+         lo slot solo se è ancora libero e registra la prenotazione nella
+         stessa transazione (niente rollback lato client). Il visitatore non
+         può più leggere né modificare direttamente le tabelle. */
+      return sb('rpc/fisio_prenota', {
         method: 'POST',
         body: JSON.stringify({
-          slot_id: s.id, nome: d.nome, telefono: d.telefono,
-          note: (d.note || '').slice(0, 320)
+          p_slot: s.id, p_nome: d.nome, p_telefono: d.telefono,
+          p_note: (d.note || '').slice(0, 320)
         })
-      }).then(function (r3) {
-        if (!r3.ok) {
-          /* squad-fisio-w2: POST fallita DOPO la PATCH — rollback compensativo:
-             libera lo slot. Se fallisce anche il rollback, log e errore comunque. */
-          return sb('fisio_slot?id=eq.' + s.id, {
-            method: 'PATCH',
-            body: JSON.stringify({ stato: 'libero' })
-          }).then(function (rr) {
-            /* squad-fisio-w2: rollback fallito anche solo a livello HTTP → log */
-            if (!rr.ok) console.error('Rollback slot ' + s.id + ' fallito: http ' + rr.status);
-          }, function (rbErr) {
-            console.error('Rollback slot ' + s.id + ' fallito:', rbErr);
-          }).then(function () { throw new Error('pren ' + r3.status); });
-        }
-        return s;
+      }).then(function (r2) {
+        if (r2.ok) return s;
+        return r2.text().then(function (t) {
+          throw new Error(/occupato/.test(t) ? 'occupato' : 'pren ' + r2.status);
+        });
       });
     })
     .then(function (s) {
@@ -1543,7 +1553,7 @@ function dispPrenotaSlot(d) {
 }
 
 /* =====================================================================
- * Admin — gestione disponibilità (stesso PIN admin123, sessione esistente)
+ * Admin — gestione disponibilità (stessa sessione admin Supabase Auth)
  * ===================================================================== */
 function dispAdminErr(msg) {
   var e = $('admin-avviso');
